@@ -1,0 +1,7 @@
+# vm_size = "Standard_D2_v2"
+# acresource_group_destination = ""
+# acimage_version_destination = ""
+# acimage_version_destination = ""
+# manged_image_resource_group_name = " "
+# managed_image_name = ""
+# location = ""
