@@ -3,8 +3,8 @@ source "azure-arm"  "windowsimage" {
     # Service Principal Authentication
     # client_id        = var.client_id
     # client_secret    = var.client_secret
-    # subscription_id  = var.subscription_id
-    # tenant_id        = var.tenant_id
+    ##subscription_id  = "1901eaa9-e98f-49b6-ac39-b1cd55defe1"
+    #tenant_id        = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 
     #Tags
     azure_tags = {
@@ -19,28 +19,34 @@ source "azure-arm"  "windowsimage" {
     os_type         = "Windows"
     image_offer     = "WindowsServer"
     image_publisher = "MicrosoftWindowsServer"
-    image_sku       =  "2019-Datacenter"
-    vm_size         =  "Standard_D2_v2"
+    image_sku       =  "2022-datacenter-azure-edition-core"
+    vm_size         =  "Standard_B1s"
     communicator    = "winrm"
     winrm_use_ssl   = true
-    winrm_timeout   = "5m"
+    winrm_timeout   = "10m"
     winrm_insecure  = true
     winrm_username  = "packer"
 
+    #Define the network 
+    virtual_network_resource_group_name = "Test_VM"
+    virtual_network_name = "v-network"
+    virtual_network_subnet_name = "subnet1"
+    #private_virtual_network_with_public_ip= true
+
     ##Sourece Image Output details##
-    location = "West US 2"
-    managed_image_name = "azurewindata2019"
-    managed_image_resource_group_name = "rg-packerimages-01"
+    location = "West US"
+    # managed_image_name = "azurewindata2019"
+    # managed_image_resource_group_name = "Test_VM"
 
 
     ### Build Image publish to Target Azure compute galleries###
 
-    # shared_image_gallery_destination {
-    #     subscription_id = var.subscription_id
-    #     gallery_name    = var.acgallery_name
-    #     image_name      = var.acimage_name_definition 
-    #     image_version   = var.acimage_version_destination ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
-    #     resource_group  = var.acresource_group_destination
-    # }  
+    shared_image_gallery_destination {
+        subscription = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
+        gallery_name    = "AzurepackerImages"
+        image_name      = "windDc2022" 
+        image_version   = "1.0.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
+        resource_group  = "rg-packer-acg"
+    }  
 
 }
