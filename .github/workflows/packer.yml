@@ -30,6 +30,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         #client-secret: ${{secrets.AZURE_CLIENT_SECRET}}
         #federated-credential: ${{ secrets.AZURE_FEDERATED_CREDENTIAL }}
+        federated-credentials: true
 
     - name: Init Packer image
       working-directory: ${{env.ROOT_PATH}}
