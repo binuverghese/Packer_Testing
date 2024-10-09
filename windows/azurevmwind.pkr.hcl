@@ -19,8 +19,8 @@ source "azure-arm"  "windowsimage" {
     os_type         = "Windows"
     image_offer     = "WindowsServer"
     image_publisher = "MicrosoftWindowsServer"
-    image_sku       =  "2022-datacenter-azure-edition-core"
-    vm_size         =  "Standard_B1s"
+    image_sku       =  "2019-datacenter-gensecond"
+    vm_size         =  "Standard_D2s_v3"
     communicator    = "winrm"
     winrm_use_ssl   = true
     winrm_timeout   = "10m"
