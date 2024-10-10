@@ -43,7 +43,7 @@ jobs:
 
   terraform:
     name: Deploy VM using SIG
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted,test]
     env:
       ROOT_PATH : '${{github.workspace}}/terraform'
     permissions:
