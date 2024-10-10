@@ -45,7 +45,7 @@ source "azure-arm"  "windowsimage" {
         subscription = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
         gallery_name    = "AzurepackerImages"
         image_name      = "windDc2022" 
-        image_version   = "3.1.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
+        image_version   = "1.1.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
         resource_group  = "rg-packer-acg"
     }  
 

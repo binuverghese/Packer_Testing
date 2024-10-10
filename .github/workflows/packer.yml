@@ -46,6 +46,9 @@ jobs:
     runs-on: [self-hosted,test]
     env:
       ROOT_PATH : '${{github.workspace}}/terraform'
+    permissions:
+      id-token: write
+      contents: read
     needs: packer
     steps:
       - name: Checkout code
