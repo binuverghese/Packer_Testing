@@ -6,40 +6,40 @@ on:
       #- main
        - test
 jobs:
-  packer:
-    name: Build and Publish Image with Packer
-    runs-on: [self-hosted,test]
-    env:
-      ROOT_PATH : '${{github.workspace}}/windows'
+  # packer:
+  #   name: Build and Publish Image with Packer
+  #   runs-on: [self-hosted,test]
+  #   env:
+  #     ROOT_PATH : '${{github.workspace}}/windows'
 
-    permissions:
-      id-token: write
-      contents: read
+  #   permissions:
+  #     id-token: write
+  #     contents: read
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v2
 
-    - name: Set up Packer
-      uses: hashicorp/setup-packer@v2
+  #   - name: Set up Packer
+  #     uses: hashicorp/setup-packer@v2
 
-    - name: Authenticate to Azure 
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        #enable-AzPSSession: true
+  #   - name: Authenticate to Azure 
+  #     uses: azure/login@v2
+  #     with:
+  #       client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #       subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #       #enable-AzPSSession: true
 
-    - name: Init Packer image
-      working-directory: ${{env.ROOT_PATH}}
-      run: 
-        packer init .
+  #   - name: Init Packer image
+  #     working-directory: ${{env.ROOT_PATH}}
+  #     run: 
+  #       packer init .
 
-    - name:  Build Packer image
-      working-directory: ${{env.ROOT_PATH}}
-      run:
-        packer build .
+  #   - name:  Build Packer image
+  #     working-directory: ${{env.ROOT_PATH}}
+  #     run:
+  #       packer build .
 
   terraform:
     name: Deploy VM using SIG
@@ -49,7 +49,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: packer
+    # needs: packer
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
