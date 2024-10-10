@@ -45,7 +45,7 @@ jobs:
     name: Deploy VM using SIG
     runs-on: [self-hosted,test]
     env:
-      ROOT_PATH : '${{github.workspace}}\terraform'
+      ROOT_PATH : '${{github.workspace}}/terraform'
     permissions:
       id-token: write
       contents: read
