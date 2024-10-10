@@ -68,8 +68,9 @@ jobs:
          az account show
 
       - name: Terraform Init
-        id: init
         working-directory: ${{env.ROOT_PATH}}
+        run: 
+         terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
         env: 
           STORAGE_ACCOUNT: ${{ secrets.STORAGE_ACCOUNT }}
           CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
@@ -77,27 +78,28 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_TENANT_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        run: 
-         terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
+        
 
         #Run Terraform Plan
       - name: Terraform plan
-        id: plan
+        
         working-directory: ${{env.ROOT_PATH}}
+        run: 
+         terraform plan -no-color
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: 
-         terraform plan -no-color
+        
   
        #Run Terraform apply
       - name: Terraform Apply
-        id: apply
+        
         working-directory: ${{env.ROOT_PATH}}
+        run: 
+         terraform apply -auto-approve
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: 
-         terraform apply -auto-approve      
+             
