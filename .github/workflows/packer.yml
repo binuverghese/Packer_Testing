@@ -70,7 +70,7 @@ jobs:
       - name: Terraform Init
         working-directory: ${{env.ROOT_PATH}}
         run: 
-         terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
+         terraform init #-backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
         env: 
           STORAGE_ACCOUNT: ${{ secrets.STORAGE_ACCOUNT }}
           CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
