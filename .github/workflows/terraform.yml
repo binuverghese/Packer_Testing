@@ -8,14 +8,14 @@ on:
 jobs:
  terraform:
     name: Deploy VM using SIG
-    runs-on: [self-hosted,test] #[Linux]
+    runs-on: [Linux] #[self-hosted,test]
     defaults:
         run:
-            shell: pwsh
-            working-directory: ~\terraform-poc
+            shell: bash
+            working-directory: ~/terraform-poc
         
     env:
-      ROOT_PATH : '${{github.workspace}}\terraform-poc' 
+      # ROOT_PATH : '${{github.workspace}}\terraform-poc' 
       TF_LOG: INFO
     permissions:
       id-token: write
