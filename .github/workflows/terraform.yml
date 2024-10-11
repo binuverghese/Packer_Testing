@@ -9,6 +9,11 @@ jobs:
  terraform:
     name: Deploy VM using SIG
     runs-on: [self-hosted,test] #[Linux]
+    defaults:
+        run:
+            shell: pwsh
+            working-directory: ~/terraform-poc
+        
     env:
       ROOT_PATH : '${{github.workspace}}\terraform-poc' 
       TF_LOG: INFO
@@ -35,7 +40,7 @@ jobs:
          az account show
 
       - name: Terraform Init 
-        working-directory: ${{env.ROOT_PATH}}
+        # working-directory: ${{env.ROOT_PATH}}
         env:
           #STORAGE_ACCOUNT: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}
           #CONTAINER_NAME: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}
