@@ -11,8 +11,8 @@ jobs:
     runs-on: [self-hosted,test] #[Linux]
     defaults:
         run:
-            shell: powershell
-            working-directory: ~/terraform-poc
+            shell: pwsh
+            working-directory: ~\terraform-poc
         
     env:
       ROOT_PATH : '${{github.workspace}}\terraform-poc' 
