@@ -10,7 +10,7 @@ jobs:
     name: Deploy VM using SIG
     runs-on: [self-hosted,test] #[Linux]
     env:
-      ROOT_PATH : '${{github.workspace}}/terraform-poc' 
+      ROOT_PATH : '${{github.workspace}}\terraform-poc' 
       TF_LOG: INFO
     permissions:
       id-token: write
