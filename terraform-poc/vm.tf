@@ -6,6 +6,13 @@
 #   value = data.azurerm_subscription.current.display_name
 # }
 
+provider "azurerm" {
+  features { }
+  subscription_id = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
+  use_oidc =true 
+}
+
+
 data "azurerm_resource_group" "example" {
   name = "Test_VM"
 }
