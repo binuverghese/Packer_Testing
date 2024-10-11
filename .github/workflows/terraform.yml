@@ -1,11 +1,10 @@
 name: Terraform deploy
 
 on:
-  
-  workflow_dispatch: 
-    #  branches:
-    #   #- main
-    #    - test
+    push:
+        branches:
+          #- main
+           - test
 jobs:
  terraform:
     name: Deploy VM using SIG
