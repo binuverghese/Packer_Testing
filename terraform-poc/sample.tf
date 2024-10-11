@@ -12,5 +12,8 @@ terraform {
      key = "terraform.tfstate"
      use_oidc = true
      use_azuread_auth = true
+     resource_group_name  = "Test_VM"
+     storage_account_name = "tfstatewells"
+     container_name       = "terraform"
   }
 }
