@@ -43,7 +43,7 @@ jobs:
 
   terraform:
     name: Deploy VM using SIG
-    runs-on: ubuntu-latest #[self-hosted,test]
+    runs-on: [self-hosted,test]
     defaults :
         run : 
          working-directory: ./terraform
