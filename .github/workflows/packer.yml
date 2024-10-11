@@ -44,8 +44,11 @@ jobs:
   terraform:
     name: Deploy VM using SIG
     runs-on: [self-hosted,test]
+    defaults :
+        run : 
+         working-directory: ./terraform
     env:
-      ROOT_PATH : ./terraform #'${{github.workspace}}/terraform' 
+      #ROOT_PATH : ./terraform #'${{github.workspace}}/terraform' 
       TF_LOG: INFO
       #STORAGE_ACCOUNT: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}
       #CONTAINER_NAME: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}
@@ -57,6 +60,7 @@ jobs:
       id-token: write
       contents: read
     # needs: packer
+        
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -75,7 +79,7 @@ jobs:
          az account show
 
       - name: Terraform Init
-        working-directory: ${{env.ROOT_PATH}}
+        #working-directory: ${{env.ROOT_PATH}}
         run: 
          terraform init  -backend-config="resource_group_name=${{ secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME }}" -backend-config="storage_account_name=${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}" -backend-config="container_name=${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}"  
        
