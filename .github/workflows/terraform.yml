@@ -11,7 +11,7 @@ jobs:
     runs-on: [self-hosted,test] #[Linux]
     defaults:
         run:
-            shell: pwsh
+            shell: powershell
             working-directory: ~/terraform-poc
         
     env:
