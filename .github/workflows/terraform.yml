@@ -12,7 +12,7 @@ jobs:
     defaults:
         run:
             shell: bash
-            working-directory: Packer_Testing/Packer_Testing/terraform-poc
+            working-directory: '${{github.workspace}}\terraform-poc' 
         
     env:
       # ROOT_PATH : '${{github.workspace}}\terraform-poc' 
