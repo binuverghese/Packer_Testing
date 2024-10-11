@@ -45,11 +45,11 @@ jobs:
     name: Deploy VM using SIG
     runs-on: [self-hosted,test]
     env:
-      ROOT_PATH : '${{github.workspace}}/terraform'
+      ROOT_PATH : ./terraform #'${{github.workspace}}/terraform' 
       TF_LOG: INFO
-      #STORAGE_ACCOUNT: ${{ secrets.STORAGE_ACCOUNT }}
-      #CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
-      #RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP_NAME }}
+      #STORAGE_ACCOUNT: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}
+      #CONTAINER_NAME: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}
+      #RESOURCE_GROUP: ${{ secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME }}
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
