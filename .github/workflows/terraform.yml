@@ -15,7 +15,7 @@ jobs:
             working-directory: '${{github.workspace}}/terraform-poc' 
         
     env:
-      # ROOT_PATH : '${{github.workspace}}\terraform-poc' 
+      #ROOT_PATH : '${{github.workspace}}\terraform-poc' 
       TF_LOG: INFO
     permissions:
       id-token: write
@@ -58,7 +58,7 @@ jobs:
 
       - name: Terraform plan
         
-        working-directory: ${{env.ROOT_PATH}}
+        working-directory: '${{github.workspace}}/terraform-poc' 
         run: 
          terraform plan -no-color
         env:
