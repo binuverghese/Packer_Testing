@@ -70,14 +70,14 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         
   
-       #Run Terraform apply
-      # - name: Terraform Apply
+       # Run Terraform apply
+      - name: Terraform Apply
         
-      #   working-directory: ${{env.ROOT_PATH}}
-      #   run: 
-      #    terraform apply -auto-approve
-      #   env:
-      #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        working-directory: '${{github.workspace}}/terraform-poc'
+        run: 
+         terraform apply -auto-approve
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
              
