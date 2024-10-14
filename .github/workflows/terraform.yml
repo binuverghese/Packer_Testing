@@ -55,6 +55,9 @@ jobs:
         
 
         #Run Terraform Plan
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: Terraform plan
         
         working-directory: ${{env.ROOT_PATH}}
