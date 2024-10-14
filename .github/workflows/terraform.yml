@@ -50,7 +50,7 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           
-        run: terraform init -backend-config="resource_group_name=$RESOURCE_GROUP" -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME"  
+        run: terraform init -input=false -backend-config="resource_group_name=$RESOURCE_GROUP" -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME"  
         
         
 
