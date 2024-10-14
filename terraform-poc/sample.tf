@@ -10,8 +10,10 @@ terraform {
 
   backend "azurerm" {
      key = "terraform.tfstate"
-     resource_group_name  = "jp_actions_testing"
-     storage_account_name = "jptestact"
+     resource_group_name  = "Test_VM"
+     storage_account_name = "tfstatewells"
      container_name       = "terraform"
+     use_oidc = true    
+     use_azuread_auth = true
   }
 }

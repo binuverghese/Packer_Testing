@@ -42,9 +42,9 @@ jobs:
       - name: Terraform Init 
         # working-directory: ${{env.ROOT_PATH}}
         env:
-          STORAGE_ACCOUNT: "jptestact"
+          STORAGE_ACCOUNT: "Test_VM"
           CONTAINER_NAME: "terraform"
-          RESOURCE_GROUP: "Actions_Testing_JP"
+          RESOURCE_GROUP: "tfstatewells"
           ARM_CLIENT_ID: ${{ secrets.TEST_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.TEST_SECRET_ID}}
           ARM_SUBSCRIPTION_ID: ${{ secrets.TEST_SUBSCRIPTION_ID }}
