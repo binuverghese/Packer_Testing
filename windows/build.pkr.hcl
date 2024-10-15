@@ -1,17 +1,7 @@
 build {
     sources = [ "source.azure-arm.windowsimage" ]
 
-  provisioner "powershell" {
-    inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", "choco install 7zip -y --force --force-dependencies", "choco install vscode -y --force --force-dependencies", "choco install firefox -y --force --force-dependencies", "choco install terraform -y --force --force-dependencies" ,"choco install packer -y --force --force-dependencies", "choco install azurecli -y --force --force-dependencies"]
-    timeout = "15m"
-  }
-  
-  provisioner "windows-restart" {
-    restart_timeout = "5m"
-  }
-
-
-# Provisioner: Install IIS (as an example)
+ # Provisioner: Install IIS (as an example)
   provisioner "powershell" {
     inline = [
       "Install-WindowsFeature -name Web-Server -IncludeManagementTools",
@@ -32,11 +22,13 @@ build {
     restart_timeout = "5m"
   }
 
+
+
   provisioner "powershell" {
     inline = [
-      # Enable File and Printer Sharing (ICMPv4-In)
-      "New-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow -Enabled True -Profile Any -Description 'Allow ICMPv4 Echo Requests'"
-      
+      winrm quickconfig -force 
+      New-NetFirewallRule -Name "WinRM HTTP" -DisplayName "WinRM HTTP" -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 5985
+      $ICMP = Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" If ($ICMP -eq $null){write-host ("ICMP is not enabled")}elseif ($ICMP -ne $null){write-host ("ICMP is not enabled, turning on now")Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -enabled True}$ICMP = Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv6-In)" If ($ICMP -eq $null){write-host ("ICMP is not enabled")}elseif ($ICMP -ne $null){write-host ("ICMP is not enabled, turning on now")Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -enabled True} 
     ]
   }
 
@@ -44,13 +36,38 @@ build {
 
  provisioner "powershell" {    
    inline = [      
-   # Enable File and Printer Sharing (ICMPv6-In)     
-   "New-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -Direction Inbound -Protocol ICMPv6 -IcmpType 128 -Action Allow -Enabled True -Profile Any -Description 'Allow ICMPv6 Echo Requests'"    
-    ]  
+   New-NetFirewallRule -Name "WinRM HTTP" -DisplayName "WinRM HTTP" -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 5985]
  }
 
   provisioner "powershell" {
-    inline = ["while ((Get-Service RdAgent).Status -ne 'Running') { Start-Sleep -s 5 }", "while ((Get-Service WindowsAzureGuestAgent).Status -ne 'Running') { Start-Sleep -s 5 }", "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit /mode:vm", "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"]
+    inline = [
+        $ICMP = Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" 
+    If ($ICMP -eq $null)
+    {
+    write-host ("ICMP is not enabled")
+    }
+    elseif ($ICMP -ne $null)
+   {
+   write-host ("ICMP is not enabled, turning on now")
+   Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -enabled True
   }
-}
+  ]
+ }
+
+ provisioner "powershell" {
+    inline = [
+        $ICMP = Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv6-In)" 
+    If ($ICMP -eq $null)
+    {
+   write-host ("ICMP is not enabled")
+   }
+    elseif ($ICMP -ne $null)
+   {
+    write-host ("ICMP is not enabled, turning on now")
+   Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -enabled True
+  }
+  ]
+ }
+} 
+
 
