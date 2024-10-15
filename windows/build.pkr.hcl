@@ -1,13 +1,35 @@
 build {
     sources = [ "source.azure-arm.windowsimage" ]
 
-  provisioner "powershell" {
-    inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", "choco install 7zip -y --force --force-dependencies", "choco install vscode -y --force --force-dependencies", "choco install firefox -y --force --force-dependencies", "choco install terraform -y --force --force-dependencies" ,"choco install packer -y --force --force-dependencies", "choco install azurecli -y --force --force-dependencies"]
-  }
+#   provisioner "powershell" {
+#     inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", "choco install 7zip -y --force --force-dependencies", "choco install vscode -y --force --force-dependencies", "choco install firefox -y --force --force-dependencies", "choco install terraform -y --force --force-dependencies" ,"choco install packer -y --force --force-dependencies", "choco install azurecli -y --force --force-dependencies"]
+#   }
   
-  provisioner "windows-restart" {
+#   provisioner "windows-restart" {
 
-   }
+#    }
+
+
+# Provisioner: Install IIS (as an example)
+  provisioner "powershell" {
+    inline = [
+      "Install-WindowsFeature -name Web-Server -IncludeManagementTools",
+      "$feature = Get-WindowsFeature -Name Web-Server",
+      "if ($feature.Installed) { Write-Host 'IIS Installed Successfully.' } else { Write-Host 'IIS Installation Failed'; Exit 1 }"
+    ]
+  }
+
+  # Provisioner: Run a simple script to create a text file (as an example)
+  provisioner "powershell" {
+    inline = [
+      "New-Item -Path C:/ -Name 'testfile.txt' -ItemType 'file' -Value 'This is a test file.'"
+    ]
+  }
+
+  # Provisioner: Restart Windows to apply the changes
+  provisioner "windows-restart" {
+    restart_timeout = "5m"
+  }
   provisioner "powershell" {
     inline = [
       # Enable File and Printer Sharing (ICMPv4-In)
