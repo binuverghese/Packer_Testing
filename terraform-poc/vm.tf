@@ -63,24 +63,3 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
 
      
 }
-
-# resource "null_resource" "check_file" {
-#   provisioner "remote-exec" {
-#     inline = [
-#       "powershell -Command \"if (Test-Path 'D:\\DATALOSS_WARNING_README.txt') { Write-Output 'File exists.' } else { Write-Output 'File does not exist.' }\""
-#     ]
- 
-#     connection {
-#       type        = "winrm"
-#       host        = azurerm_windows_virtual_machine.example-vm.private_ip_address
-#       user        = "adminuser"  # Replace with your VM's admin username
-#       password    = "Welcome#2024"   # Replace with your VM's admin password
-#       https       = false
-#       port        = 5985  # Use 5986 if WinRM is configured for HTTPS
-#     }
-#   }
-# }
- 
-# output "file_check_result" {
-#   value = null_resource.check_file.*.id
-# }
