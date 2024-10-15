@@ -1,10 +1,13 @@
 build {
     sources = [ "source.azure-arm.windowsimage" ]
 
-#   provisioner "powershell" {
-#     inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))","choco install 7zip -y --force --force-dependencies"]
-#   }
+  provisioner "powershell" {
+    inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))","choco install 7zip -y --force --force-dependencies"]
+  }
   
+  provisioner "windows-restart" {
+
+   }
   provisioner "powershell" {
     inline = [
       # Enable File and Printer Sharing (ICMPv4-In)
@@ -13,9 +16,7 @@ build {
     ]
   }
 
-   provisioner "windows-restart" {
-
-   }
+   
 
  provisioner "powershell" {    
    inline = [      
