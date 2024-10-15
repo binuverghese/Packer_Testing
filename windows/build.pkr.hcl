@@ -1,13 +1,14 @@
 build {
     sources = [ "source.azure-arm.windowsimage" ]
 
-#   provisioner "powershell" {
-#     inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", "choco install 7zip -y --force --force-dependencies", "choco install vscode -y --force --force-dependencies", "choco install firefox -y --force --force-dependencies", "choco install terraform -y --force --force-dependencies" ,"choco install packer -y --force --force-dependencies", "choco install azurecli -y --force --force-dependencies"]
-#   }
+  provisioner "powershell" {
+    inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", "choco install 7zip -y --force --force-dependencies", "choco install vscode -y --force --force-dependencies", "choco install firefox -y --force --force-dependencies", "choco install terraform -y --force --force-dependencies" ,"choco install packer -y --force --force-dependencies", "choco install azurecli -y --force --force-dependencies"]
+    timeout = "15m"
+  }
   
-#   provisioner "windows-restart" {
-
-#    }
+  provisioner "windows-restart" {
+    restart_timeout = "5m"
+  }
 
 
 # Provisioner: Install IIS (as an example)
@@ -30,6 +31,7 @@ build {
   provisioner "windows-restart" {
     restart_timeout = "5m"
   }
+
   provisioner "powershell" {
     inline = [
       # Enable File and Printer Sharing (ICMPv4-In)
