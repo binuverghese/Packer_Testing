@@ -1,17 +1,14 @@
 build {
     sources = [ "source.azure-arm.windowsimage" ]
 
-  # provisioner "powershell" {
-  #   inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))",
-  #             "choco install adobereader -y",
-  #             "choco install googlechrome -y"
-  #   ]
-  # }  
+  provisioner "powershell" {
+    inline = ["Set-ExecutionPolicy Bypass -Scope Process -Force", "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12", "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))","choco install 7zip -y --force --force-dependencies"]
+  }
   
   provisioner "powershell" {
     inline = [
       # Enable File and Printer Sharing (ICMPv4-In)
-      "New-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow -Enabled True -Profile Any -Description 'Allow ICMPv4 Echo Requests'",
+      "New-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow -Enabled True -Profile Any -Description 'Allow ICMPv4 Echo Requests'"
       
     ]
   }
@@ -19,9 +16,8 @@ build {
  provisioner "powershell" {    
    inline = [      
    # Enable File and Printer Sharing (ICMPv6-In)     
-   "New-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -Direction Inbound -Protocol ICMPv6 -IcmpType 128 -Action Allow -Enabled True -Profile Any -Description 'Allow ICMPv6 Echo Requests'",     
-   # You can add more commands here as needed    
-   ]  
+   "New-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -Direction Inbound -Protocol ICMPv6 -IcmpType 128 -Action Allow -Enabled True -Profile Any -Description 'Allow ICMPv6 Echo Requests'"    
+    ]  
  }
 
   provisioner "powershell" {

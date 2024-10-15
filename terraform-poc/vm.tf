@@ -32,7 +32,7 @@ data "azurerm_shared_image" "example-sig" {
 }
 
 resource "azurerm_network_interface" "example-nic" {
-  name                = "packerimagevm1-nic"
+  name                = "packerimagevm-nic"
   location            = data.azurerm_resource_group.example.location
   resource_group_name = data.azurerm_resource_group.example.name
 
@@ -44,7 +44,7 @@ resource "azurerm_network_interface" "example-nic" {
 }
 
 resource "azurerm_windows_virtual_machine" "example-vm" {
-  name                = "packerimagevm1"
+  name                = "packerimagevm"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = data.azurerm_resource_group.example.location
   size                = "Standard_D2s_v3"

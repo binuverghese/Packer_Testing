@@ -1,10 +1,5 @@
 source "azure-arm"  "windowsimage" {
 
-    # Service Principal Authentication
-    # client_id        = var.client_id
-    # client_secret    = var.client_secret
-    ##subscription_id  = "1901eaa9-e98f-49b6-ac39-b1cd55defe1"
-    #tenant_id        = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 
     #Tags
     azure_tags = {
@@ -31,13 +26,9 @@ source "azure-arm"  "windowsimage" {
     virtual_network_resource_group_name = "Test_VM"
     virtual_network_name = "v-network"
     virtual_network_subnet_name = "subnet1"
-    #private_virtual_network_with_public_ip= true
 
     ##Sourece Image Output details##
     location = "West US"
-    # managed_image_name = "azurewindata2019"
-    # managed_image_resource_group_name = "Test_VM"
-
 
     ### Build Image publish to Target Azure compute galleries###
 
@@ -45,7 +36,7 @@ source "azure-arm"  "windowsimage" {
         subscription = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
         gallery_name    = "AzurepackerImages"
         image_name      = "windDc2022" 
-        image_version   = "3.0.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
+        image_version   = "4.0.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
         resource_group  = "rg-packer-acg"
     }  
 
