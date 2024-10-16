@@ -64,26 +64,6 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
      
 }
 
-resource "azurerm_virtual_machine_extension" "winrm_extension" {
-  name                 = "winrm"
-  virtual_machine_id   = azurerm_windows_virtual_machine.example-vm.id
-  publisher            = "Microsoft.Compute"
-  type                 = "CustomScriptExtension"
-  type_handler_version = "1.10"
-
-  settings = <<SETTINGS
-    {
-        "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command \"
-        Set-Item WSMan:localhost\\Client\\TrustedHosts '*' -Force;
-        Enable-PSRemoting -Force;
-        winrm quickconfig -quiet;
-        winrm set winrm/config/service/auth '@{Basic=\"true\"}';
-        winrm set winrm/config/service '@{AllowUnencrypted=\"true\"}';\""
-    }
-SETTINGS
-}
-
-
 output "vm_private_ip" {
   description = "The private IP address of the Windows VM"
   value       = azurerm_network_interface.example-nic.private_ip_address
