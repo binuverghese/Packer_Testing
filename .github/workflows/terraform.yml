@@ -83,6 +83,37 @@ jobs:
              
       - name: Generate Ansible Inventory
         run: |
-            VM_PRIVATE_IP=$(terraform output -raw vm_private_ip)
-            #echo "[windows]" > inventory
-            echo "${VM_PRIVATE_IP} > inventory #ansible_user=adminuser ansible_password='Password1234!' ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore" >> inventory
+            VM_PRIVATE_IPS=$(terraform output -json vm_private_ips | jq -r '.[]')
+            echo "[windows]" > inventory
+             for ip in $VM_PRIVATE_IP; do
+              echo "${ip} ansible_user=adminuser ansible_password='Welcome#2024' ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore" >> inventory
+             done
+ ansible:
+       name: Ansible Playbook
+       runs-on: [Linux] #[self-hosted,test]
+       needs: terraform
+       defaults:
+        run:
+            shell: bash
+            working-directory: '${{github.workspace}}/terraform-poc' 
+        
+       #env:
+      #ROOT_PATH : '${{github.workspace}}\terraform-poc' 
+      #TF_LOG: INFO
+       permissions:
+        id-token: write
+        contents: read
+    
+       steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Setup Ansible
+          uses: azure/setup-ansible@v1
+
+        - name: Run Ansible Playbook
+          run: ansible-playbook -i inventory playbook.yml
+
+        - name: Notification on Success
+          if: success()
+          run: echo "Terraform and Ansible tasks completed successfully."         
