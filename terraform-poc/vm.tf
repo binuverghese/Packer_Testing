@@ -63,3 +63,8 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
 
      
 }
+
+output "vm_private_ip" {
+  description = "The private IP address of the Windows VM"
+  value       = azurerm_network_interface.example.private_ip_address
+}
