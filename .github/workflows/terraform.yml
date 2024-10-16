@@ -89,14 +89,16 @@ jobs:
       
       - name: Update Inventory
         run: |
-          #echo "[windows]" >> inventory
-          #echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connction=winrm" >> inventory
-          VM_PRIVATE_IP=$(terraform output -raw vm_private_ip)
-          echo "[windows]" > inventory
-          echo "${VM_PRIVATE_IP} > inventory ansible_user=adminuser ansible_password='Welcome!' ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore" >> inventory
+          echo "[windows]" > inventory.ini
+          echo "${{ steps.apply.outputs.private_ip }}" >> inventory.ini
+          echo "ansible_user=adminuser" >> inventory.ini
+          echo "ansible_password=Welcome#2024" >> inventory.ini
+          echo "ansible_connection=winrm" >> inventory.ini
+          echo "ansible_port=5985" >> inventory.ini
+          echo "ansible_winrm_server_cert_validation=ignore" >> inventory.ini
 
-      # - name: Check Inventory File
-      #   run: cat '${{github.workspace}}/ansible/inventory'
+      - name: Check Inventory File
+        run: cat inventory.ini
             
 
       - name: Install Ansible
