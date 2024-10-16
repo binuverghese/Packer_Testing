@@ -84,7 +84,7 @@ jobs:
       - name: Get private IP address
         id: get_ip
         run: |
-           echo "PRIVATE_IP=$(terraform output private_ip)" >> $GITHUB_ENV
+           echo "vm_private_ip=$(terraform output vm_private_ip)" >> $GITHUB_ENV
 
       - name: Install Ansible
         run: |
