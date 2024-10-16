@@ -103,7 +103,6 @@ jobs:
 
       - name: Setup Ansible
         uses: azure/setup-ansible@v1
-      
 
       - name: Run Ansible Playbook
         working-directory: '${{github.workspace}}/ansible'
