@@ -81,6 +81,12 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       
+
+      - name: Install Ansible
+        run: |
+            sudo apt update
+            sudo apt install -y ansible jq    
+
       - name: Get private IP address
         id: get_ip
         run: |
