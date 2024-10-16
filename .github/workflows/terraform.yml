@@ -80,40 +80,23 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-             
-      - name: Generate Ansible Inventory
+      
+          name: Get private IP address
+          id: get_ip
+          run: |
+           echo "PRIVATE_IP=$(terraform output private_ip)" >> $GITHUB_ENV
+
+      - name: Install Ansible
         run: |
-            VM_PRIVATE_IP=$(terraform output -raw vm_private_ip)
-            echo "[windows]" > inventory
-             for ip in $VM_PRIVATE_IP; do
-              echo "${ip} ansible_user=adminuser ansible_password='Welcome#2024' ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore" >> inventory
-             done
- ansible:
-       name: Ansible Playbook
-       runs-on: [Linux] #[self-hosted,test]
-       needs: terraform
-       defaults:
-        run:
-            shell: bash
-            working-directory: '${{github.workspace}}/terraform-poc' 
-        
-       #env:
-      #ROOT_PATH : '${{github.workspace}}\terraform-poc' 
-      #TF_LOG: INFO
-       permissions:
-        id-token: write
-        contents: read
+           sudo apt update
+           sudo apt install -y ansible
+
+      - name: Update Inventory
+        run: |
+          echo "[windows]" > inventory.ini
+          echo "my_windows_vm ansible_host=${{ env.PRIVATE_IP }} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connection=winrm" >> inventory.ini
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i inventory.ini ansible/setup_vm.yml
     
-       steps:
-        - name: Checkout repository
-          uses: actions/checkout@v2
-
-        - name: Setup Ansible
-          uses: azure/setup-ansible@v1
-
-        - name: Run Ansible Playbook
-          run: ansible-playbook -i inventory playbook.yml
-
-        - name: Notification on Success
-          if: success()
-          run: echo "Terraform and Ansible tasks completed successfully."         
