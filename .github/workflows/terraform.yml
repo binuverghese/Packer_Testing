@@ -83,7 +83,7 @@ jobs:
              
       - name: Generate Ansible Inventory
         run: |
-            VM_PRIVATE_IPS=$(terraform output -json vm_private_ips | jq -r '.[]')
+            VM_PRIVATE_IP=$(terraform output -raw vm_private_ip)
             echo "[windows]" > inventory
              for ip in $VM_PRIVATE_IP; do
               echo "${ip} ansible_user=adminuser ansible_password='Welcome#2024' ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore" >> inventory
