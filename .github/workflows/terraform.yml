@@ -101,10 +101,8 @@ jobs:
         run: cat inventory.ini
             
 
-      - name: Install Ansible
-        run: |
-             sudo apt update
-             sudo apt install -y ansible
+      - name: Setup Ansible
+        uses: azure/setup-ansible@v1
       
 
       - name: Run Ansible Playbook
