@@ -109,6 +109,8 @@ jobs:
           cat inventory.ini  # Display the inventory for verification
     
       - name: Run Ansible Playbook
+        working-directory: '${{github.workspace}}/ansible'
         run: |
-              ansible-playbook -i inventory.ini ansible/setup_vm.yml
+          ansible-playbook -i inventory.ini setup_vm.yml
+
     
