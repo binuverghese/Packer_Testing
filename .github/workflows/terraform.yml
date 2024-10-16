@@ -81,10 +81,10 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       
-      - name: Get private IP address
-        id: get_ip
-        run: |
-           echo "vm_private_ip=$(terraform output vm_private_ip)" >> $GITHUB_ENV
+      # - name: Get private IP address
+      #   id: get_ip
+      #   run: |
+      #      echo "vm_private_ip=$(terraform output vm_private_ip)" >> $GITHUB_ENV
 
       - name: Install Ansible
         run: |
@@ -94,7 +94,7 @@ jobs:
       - name: Update Inventory
         run: |
           echo "[windows]" > inventory.ini
-          echo "my_windows_vm ansible_host=${{ env.PRIVATE_IP }} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connection=winrm" >> inventory.ini
+          echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connection=winrm" >> inventory.ini
 
       - name: Run Ansible Playbook
         working-directory: '${{github.workspace}}/ansible'
