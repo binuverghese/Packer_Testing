@@ -66,7 +66,7 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
 
 resource "azurerm_virtual_machine_extension" "winrm_extension" {
   name                 = "winrm"
-  virtual_machine_id   = azurerm_windows_virtual_machine.example.id
+  virtual_machine_id   = azurerm_windows_virtual_machine.example-vm.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10"
