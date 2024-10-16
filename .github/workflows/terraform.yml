@@ -89,11 +89,11 @@ jobs:
       
       - name: Update Inventory
         run: |
-          echo "[windows]" >> inventory.ini
-          echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connction=winrm" >> inventory.ini
+          echo "[windows]" >> inventory
+          echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connction=winrm" >> inventory
 
       - name: Check Inventory File
-        run: cat '${{github.workspace}}/ansible/inventory.ini'
+        run: cat '${{github.workspace}}/ansible/inventory'
             
 
       - name: Install Ansible
