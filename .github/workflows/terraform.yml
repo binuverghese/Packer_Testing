@@ -89,7 +89,7 @@ jobs:
 
       - name: Create Dynamic Inventory
         run: |
-          echo "hello world" >> inventory.ini      
+          echo "hello world" >>inventory.ini      
 
       - name: Get private IP address
         id: get_ip
