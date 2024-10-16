@@ -103,10 +103,12 @@ jobs:
     
       - name: Create Dynamic Inventory
         run: |
-          echo "[windows]" > inventory.ini
-          echo "my_windows_vm ansible_host=${{ env.vm_private_ip  }} ansible_user=adminuser  ansible_password="Welcome#2024" ansible_connection=winrm ansible_port=5985 ansible_winrm_server_cert_validation=ignore >> inventory.ini
-          echo "Dynamic inventory created:"
-          cat inventory.ini  # Display the inventory for verification
+          VM_PRIVATE_IP=$(terraform output -raw vm_private_ip || echo "no-ip")
+          if [[ "$VM_PRIVATE_IP" == "no-ip" ]]; then
+          echo "Failed to fetch VM private IP."
+          exit 1
+          fi
+          echo "Private IP fetched: $VM_PRIVATE_IP"
     
       - name: Run Ansible Playbook
         run: |
