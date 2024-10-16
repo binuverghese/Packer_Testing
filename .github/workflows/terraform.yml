@@ -80,6 +80,13 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+
+      - name: Create a Text File
+        run: echo "This is the content of the file." > myfile.txt
+   
+      - name: Display the File Content
+        run: cat myfile.txt     
       
 
       - name: Install Ansible
