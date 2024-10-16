@@ -92,6 +92,10 @@ jobs:
           echo "[windows]" >> inventory.ini
           echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connction=winrm" >> inventory.ini
 
+      - name: Check Inventory File
+        run: cat '${{github.workspace}}/ansible/inventory.ini'
+            
+
       - name: Install Ansible
         run: |
              sudo apt update
