@@ -84,17 +84,19 @@ jobs:
       # - name: Get private IP address
       #   id: get_ip
       #   run: |
-      #      echo "vm_private_ip=$(terraform output vm_private_ip)" >> $GITHUB_ENV
+      #     echo "vm_private_ip=$(terraform output vm_private_ip)" >> $GITHUB_ENV
+
+      
+      - name: Update Inventory
+        run: |
+          echo "[windows]" >> inventory.ini
+          echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connction=winrm" >> inventory.ini
 
       - name: Install Ansible
         run: |
-           sudo apt update
-           sudo apt install -y ansible
-
-      - name: Update Inventory
-        run: |
-          echo "[windows]" > inventory.ini
-          echo "${VM_PRIVATE_IP} ansible_user=adminuser ansible_password=Welcome#2024 ansible_connection=winrm" >> inventory.ini
+             sudo apt update
+             sudo apt install -y ansible
+      
 
       - name: Run Ansible Playbook
         working-directory: '${{github.workspace}}/ansible'
