@@ -81,40 +81,22 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
-
-      - name: Create a Text File
-        run: echo "This is the content of the file." > myfile.txt
-   
-      - name: Display the File Content
-        run: cat myfile.txt     
-      
-
-      - name: Install Ansible
-        run: |
-            sudo apt update
-            sudo apt install -y ansible jq    
-
-      - name: Create Dynamic Inventory
-        run: |
-          echo "MY_VAR=Hello from GitHub Actions!">> inventory.ini    
-
-      - name: Get private IP address
-        id: get_ip
-        run: |
-            VM_PRIVATE_IP=$(terraform output -raw vm_private_ip || echo "no-ip")
-            echo "VM_PRIVATE_IP=${VM_PRIVATE_IP}" >> $GITHUB_ENV
-            
+      - name: Generate Ansible Inventory
+        run: ./create_inventory.sh
+        working-directory: '${{github.workspace}}/terraform-poc'
     
-      - name: Create Dynamic Inventory
-        run: |
-          echo "hello world" >> inventory.ini
-          # echo "my_windows_vm ansible_host=${{ env.vm_private_ip  }} ansible_user=adminuser  ansible_password="Welcome#2024" ansible_connection=winrm ansible_port=5985 ansible_winrm_server_cert_validation=ignore" >> inventory.ini
-          # echo "Dynamic inventory created:"
-          # cat inventory.ini  # Display the inventory for verification
-    
+      - name: Set up Ansible
+        run: sudo apt-get install -y ansible
+
+      # - name: Install Ansible
+      #   run: |
+      #       sudo apt update
+      #       sudo apt install -y ansible jq    
+
+  
       - name: Run Ansible Playbook
-        working-directory: '${{github.workspace}}/ansible'
+        #working-directory: '${{github.workspace}}/ansible'
         run: |
-          ansible-playbook -i inventory.ini setup_vm.yml
+          ansible-playbook -i ansible/inventory.ini ansible/setup_vm.yml
 
     
