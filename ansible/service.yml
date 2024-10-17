@@ -1,0 +1,39 @@
+---
+- name: Check Windows Service Status
+  hosts: windows
+  tasks:
+    - name: Check if the service is running
+      win_service:
+        name: "W3SVC"  # Change this to the name of the service you want to check
+      register: update_service_status
+
+    - name: Start the service if it is not running
+      win_service:
+        name: W3SVC
+        state: started
+      when: update_service_status.state != 'running'
+
+    - name: Display service status
+      debug:
+        msg: "Service 'W3SVC' is {{ update_service_status.state }}"
+
+    - name: Check if the file exists
+      win_stat:  # Use 'stat' module for Windows
+        path: C:\testfile.txt  # Change this to the path of the file you want to check
+      register: file_status
+
+    - name: Display file existence status
+      debug:
+      msg: >
+          The file {{ file_status.stat.path }} 
+          is {{ 'present' if file_status.stat.exists else 'absent' }}.
+
+    - name: Append content to the text file
+      win_lineinfile:
+        path: C:\testfile.txt  # Change this to your file path
+        line: "This is the new line of text."  # Change this to the content you want to add
+        state: present
+
+    - name: Display confirmation message
+      debug:
+        msg: "Content has been successfully appended to {{ ansible_hostname }}'s file."
