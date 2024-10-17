@@ -24,7 +24,7 @@
 
     - name: Display file existence status
       debug:
-      msg: >
+        msg: >
           The file {{ file_status.stat.path }} 
           is {{ 'present' if file_status.stat.exists else 'absent' }}.
 
