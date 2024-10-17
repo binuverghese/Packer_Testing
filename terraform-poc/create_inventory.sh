@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Get the private IP from Terraform output
-vm_private_ip=$(terraform output -raw vm_private_ip)
-echo "Private IP fetched: $VM_PRIVATE_IP"
+vm_private_ip=$(terraform output  vm_private_ip)
+echo "Private IP fetched: $vm_private_ip"
 # Check if PRIVATE_IP is not empty
 if [ -z "$vm_private_ip" ]; then
     echo "Error: Could not retrieve the private IP from Terraform output."
     exit 1
 fi
-echo "Private IP fetched: $VM_PRIVATE_IP"
+echo "Private IP fetched: $vm_private_ip"
 # Create the Ansible inventory file
 cat <<EOL > inventory.ini
 [windows]
