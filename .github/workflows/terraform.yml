@@ -84,7 +84,7 @@ jobs:
     # Give execute permission to create_inventory.sh
       - name: Make create_inventory.sh executable
         run: chmod +x ./create_inventory.sh
-
+        
       - name: Get private IP address
         id: get_ip
         run: |
@@ -98,11 +98,15 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}    
-          
+
       - name: Generate Ansible Inventory
         run: ./create_inventory.sh
         working-directory: '${{github.workspace}}/terraform-poc'
-    
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}    
+          
       - name: Set up Ansible
         run: sudo apt-get install -y ansible
 
