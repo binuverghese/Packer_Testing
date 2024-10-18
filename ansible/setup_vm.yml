@@ -1,8 +1,0 @@
---- 
-- name: Configure Windows VM
-  hosts: windows
-  tasks:
-    - name: Install IIS
-      win_feature:
-        name: Web-Server
-        state: present
