@@ -33,7 +33,7 @@ source "azure-arm"  "windowsimage" {
     ### Build Image publish to Target Azure compute galleries###
 
     shared_image_gallery_destination {
-        subscription = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
+        subscription = var.subscription-id
         gallery_name    = "AzurepackerImages"
         image_name      = "windDc2022" 
         image_version   = "5.0.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"

@@ -48,8 +48,8 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
   resource_group_name = data.azurerm_resource_group.example.name
   location            = data.azurerm_resource_group.example.location
   size                = "Standard_D2s_v3"
-  admin_username      = "adminuser"
-  admin_password      = "Welcome#2024"
+  admin_username      = "vmuser"
+  admin_password      = "password"
   network_interface_ids = [
     azurerm_network_interface.example-nic.id
   ]
