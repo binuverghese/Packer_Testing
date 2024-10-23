@@ -96,7 +96,7 @@ data "azurerm_key_vault" "kv" {
 resource "azurerm_key_vault_access_policy" "vm_access_policy" {
   key_vault_id = data.azurerm_key_vault.kv.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_windows_virtual_machine.example-vm.identity.principal_id
+  object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
 
   secret_permissions = [
     "Get", "List",
