@@ -34,25 +34,7 @@ data "azurerm_shared_image" "example-sig" {
   #version             = "1.0.0"
 }
 
-# Fetch the existing Key Vault
-data "azurerm_key_vault" "kv" {
-  name                = "kvpacker01"
-  resource_group_name = data.azurerm_resource_group.example.name
-  #tenant_id = data.azurerm_client_config.current.tenant_id
-  depends_on = [azurerm_windows_virtual_machine.example-vm]
-}
 
-# Grant VM Managed Identity Access to Key Vault
-resource "azurerm_key_vault_access_policy" "vm_access_policy" {
-  key_vault_id = data.azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
-
-  secret_permissions = [
-    "Get", "List",
-  ]
-  depends_on = [azurerm_windows_virtual_machine.example-vm]
-}
 
 
 
@@ -93,6 +75,25 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
     ]  
      
   }
+}
+# Fetch the existing Key Vault
+data "azurerm_key_vault" "kv" {
+  name                = "kvpacker01"
+  resource_group_name = data.azurerm_resource_group.example.name
+  #tenant_id = data.azurerm_client_config.current.tenant_id
+  depends_on = [azurerm_windows_virtual_machine.example-vm]
+}
+
+# Grant VM Managed Identity Access to Key Vault
+resource "azurerm_key_vault_access_policy" "vm_access_policy" {
+  key_vault_id = data.azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
+
+  secret_permissions = [
+    "Get", "List",
+  ]
+  depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
 # Fetch the username and password secrets from Key Vault
