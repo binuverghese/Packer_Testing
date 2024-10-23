@@ -77,6 +77,8 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
     
      
   }
+  depends_on = [azurerm_key_vault_secret.vm_password, azurerm_key_vault_secret.vm_username]
+
 }
 # Fetch the existing Key Vault
 data "azurerm_key_vault" "kv" {
