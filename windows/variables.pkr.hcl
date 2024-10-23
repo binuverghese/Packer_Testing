@@ -10,11 +10,11 @@
 #   sensitive   = true
 # }
 
-variable "subscription-id" {
-  type        = string
-  description = "Azure Subscription ID."
-  sensitive   = true
-}
+# variable "subscription-id" {
+#   type        = string
+#   description = "Azure Subscription ID."
+#   sensitive   = true
+# }
 
 # variable "tenant_id" {
 #   type        = string

@@ -12,7 +12,7 @@ echo "Private IP fetched: $vm_private_ip"
 # Create the Ansible inventory file
 cat <<EOL > inventory.ini
 [windows]
-$vm_private_ip ansible_user=vmuser ansible_password="password" ansible_connection=winrm ansible_port=5986 ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore
+$vm_private_ip ansible_user=adminuser ansible_password=Welcome@2024 ansible_connection=winrm ansible_port=5986 ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore
 EOL
 
 echo "Inventory file created at ansible/inventory.ini"

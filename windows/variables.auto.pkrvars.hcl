@@ -5,4 +5,4 @@
 # manged_image_resource_group_name = " "
 # managed_image_name = ""
 # location = ""
-subscription-id = ""
+#subscription-id = ""
