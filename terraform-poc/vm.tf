@@ -67,7 +67,7 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
   }
 
     source_image_id = data.azurerm_shared_image.example-sig.id
-    depends_on = [azurerm_key_vault_secret.vm_password, azurerm_key_vault_secret.vm_username]
+    #depends_on = [azurerm_key_vault_secret.vm_password, azurerm_key_vault_secret.vm_username]
 
    lifecycle {
     ignore_changes = [
