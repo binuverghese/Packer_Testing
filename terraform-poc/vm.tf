@@ -58,6 +58,11 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
   admin_username      =  data.azurerm_key_vault_secret.vm_username.value
   admin_password      =  data.azurerm_key_vault_secret.vm_password.value
   depends_on = [data.azurerm_key_vault_secret.vm_password, data.azurerm_key_vault_secret.vm_username]
+
+  identity {
+      type = "SystemAssigned"
+    }
+  
   network_interface_ids = [
     azurerm_network_interface.example-nic.id
   ]
@@ -69,15 +74,13 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
 
     source_image_id = data.azurerm_shared_image.example-sig.id
     #depends_on = [azurerm_key_vault_secret.vm_password, azurerm_key_vault_secret.vm_username]
-
+    
    lifecycle {
     ignore_changes = [
       identity
 
     ]  
-    
-     
-  }
+    }
   
 
 }
@@ -93,7 +96,7 @@ data "azurerm_key_vault" "kv" {
 resource "azurerm_key_vault_access_policy" "vm_access_policy" {
   key_vault_id = data.azurerm_key_vault.kv.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
+  object_id    = azurerm_windows_virtual_machine.example-vm.identity.principal_id
 
   secret_permissions = [
     "Get", "List",
