@@ -100,8 +100,7 @@ resource "azurerm_key_vault_access_policy" "vm_access_policy" {
   object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
 
   secret_permissions = [
-    "get",
-    "list",
+    "Get", "List",
   ]
 }
   output "vm_private_ip" {
