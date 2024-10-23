@@ -76,38 +76,38 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
      
   }
 }
-# Fetch the existing Key Vault
-data "azurerm_key_vault" "kv" {
-  name                = "kvpacker01"
-  resource_group_name = data.azurerm_resource_group.example.name
-  #tenant_id = data.azurerm_client_config.current.tenant_id
-  depends_on = [azurerm_windows_virtual_machine.example-vm]
-}
+# # Fetch the existing Key Vault
+# data "azurerm_key_vault" "kv" {
+#   name                = "kvpacker01"
+#   resource_group_name = data.azurerm_resource_group.example.name
+#   #tenant_id = data.azurerm_client_config.current.tenant_id
+#   depends_on = [azurerm_windows_virtual_machine.example-vm]
+# }
 
-# Grant VM Managed Identity Access to Key Vault
-resource "azurerm_key_vault_access_policy" "vm_access_policy" {
-  key_vault_id = data.azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
+# # Grant VM Managed Identity Access to Key Vault
+# resource "azurerm_key_vault_access_policy" "vm_access_policy" {
+#   key_vault_id = data.azurerm_key_vault.kv.id
+#   tenant_id    = data.azurerm_client_config.current.tenant_id
+#   object_id    = azurerm_windows_virtual_machine.example-vm.identity[0].principal_id
 
-  secret_permissions = [
-    "Get", "List",
-  ]
-  depends_on = [azurerm_windows_virtual_machine.example-vm]
-}
+#   secret_permissions = [
+#     "Get", "List",
+#   ]
+#   depends_on = [azurerm_windows_virtual_machine.example-vm]
+# }
 
-# Fetch the username and password secrets from Key Vault
-data "azurerm_key_vault_secret" "vm_username" {
-  name         = "vmUsername"               # Name of the username secret in the Key Vault
-  key_vault_id = data.azurerm_key_vault.kv.id
-  depends_on = [azurerm_windows_virtual_machine.example-vm]
-}
+# # Fetch the username and password secrets from Key Vault
+# data "azurerm_key_vault_secret" "vm_username" {
+#   name         = "vmUsername"               # Name of the username secret in the Key Vault
+#   key_vault_id = data.azurerm_key_vault.kv.id
+#   depends_on = [azurerm_windows_virtual_machine.example-vm]
+# }
 
-data "azurerm_key_vault_secret" "vm_password" {
-  name         = "vmPassword"               # Name of the password secret in the Key Vault
-  key_vault_id = data.azurerm_key_vault.kv.id
-  depends_on = [azurerm_windows_virtual_machine.example-vm]
-}
+# data "azurerm_key_vault_secret" "vm_password" {
+#   name         = "vmPassword"               # Name of the password secret in the Key Vault
+#   key_vault_id = data.azurerm_key_vault.kv.id
+#   depends_on = [azurerm_windows_virtual_machine.example-vm]
+# }
 
   output "vm_private_ip" {
   description = "The private IP address of the Windows VM"
