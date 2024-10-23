@@ -50,7 +50,6 @@ data "azurerm_key_vault_secret" "vm_password" {
 }
 
 
-
 resource "azurerm_network_interface" "example-nic" {
   name                = "packerimgdemo1-nic"
   location            = data.azurerm_resource_group.example.location
