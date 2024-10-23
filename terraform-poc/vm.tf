@@ -101,6 +101,7 @@ resource "azurerm_key_vault_access_policy" "vm_access_policy" {
   secret_permissions = [
     "Get", "List",
   ]
+  depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
   output "vm_private_ip" {
   description = "The private IP address of the Windows VM"
