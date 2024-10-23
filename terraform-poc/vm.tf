@@ -57,7 +57,7 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
   size                = "Standard_D2s_v3"
   admin_username      =  data.azurerm_key_vault_secret.vm_username.value
   admin_password      =  data.azurerm_key_vault_secret.vm_password.value
-  depends_on = [azurerm_key_vault_secret.vm_password, azurerm_key_vault_secret.vm_username]
+  depends_on = [data.azurerm_key_vault_secret.vm_password, data.azurerm_key_vault_secret.vm_username]
   network_interface_ids = [
     azurerm_network_interface.example-nic.id
   ]
