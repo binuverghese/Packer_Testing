@@ -39,6 +39,7 @@ data "azurerm_key_vault" "kv" {
   name                = "kvpacker01"
   resource_group_name = data.azurerm_resource_group.example.name
   #tenant_id = data.azurerm_client_config.current.tenant_id
+  depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
 # Fetch the username and password secrets from Key Vault
