@@ -99,11 +99,13 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
 data "azurerm_key_vault_secret" "vm_username" {
   name         = "vmUsername"               # Name of the username secret in the Key Vault
   key_vault_id = data.azurerm_key_vault.kv.id
+  depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
 data "azurerm_key_vault_secret" "vm_password" {
   name         = "vmPassword"               # Name of the password secret in the Key Vault
   key_vault_id = data.azurerm_key_vault.kv.id
+  depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
   output "vm_private_ip" {
