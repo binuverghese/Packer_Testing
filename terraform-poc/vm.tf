@@ -91,7 +91,6 @@ data "azurerm_key_vault" "kv" {
   #tenant_id = data.azurerm_client_config.current.tenant_id
   #depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
-
 # Grant VM Managed Identity Access to Key Vault
 resource "azurerm_key_vault_access_policy" "vm_access_policy" {
   key_vault_id = data.azurerm_key_vault.kv.id
