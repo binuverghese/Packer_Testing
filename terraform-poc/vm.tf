@@ -1,43 +1,32 @@
-
+#Fetch the subscription details
  data "azurerm_subscription" "current" {
+ }
+#Fetch the Tenant and client details
+data "azurerm_client_config" "current" {}
 
-  }
-
-  data "azurerm_client_config" "current" {}
-
-output "current_subscription_display_name" {
-  value = data.azurerm_subscription.current.display_name
-}
-
-
+#Fetch the Existing Resource Group details 
 data "azurerm_resource_group" "example" {
   name = "Test_VM"
 }
-
+#Fetch the Existing Virtual Network details
 data "azurerm_virtual_network" "example-vnet" {
   name                = "v-network"
   resource_group_name = data.azurerm_resource_group.example.name
-
 }
-
+#Fetch the Existing Subnet Details
 data "azurerm_subnet" "example" {
   name                 = "subnet1"
   virtual_network_name = data.azurerm_virtual_network.example-vnet.name
   resource_group_name  = data.azurerm_resource_group.example.name
 }
-
-
+#Fetch the Existing Image Definition and Version details
 data "azurerm_shared_image" "example-sig" {
   name                = "windDc2022"
   gallery_name        = "AzurepackerImages"
   resource_group_name = "rg-packer-acg"
   #version             = "1.0.0"
 }
-
-
-
-
-
+#Create Network Interface card 
 resource "azurerm_network_interface" "example-nic" {
   name                = "packerimgdemo-nic"
   location            = data.azurerm_resource_group.example.location
@@ -49,7 +38,7 @@ resource "azurerm_network_interface" "example-nic" {
     private_ip_address_allocation = "Dynamic"
   }
 }
-
+#Create a Windows Virtual Machine
 resource "azurerm_windows_virtual_machine" "example-vm" {
   name                = "packerimgdemo"
   resource_group_name = data.azurerm_resource_group.example.name
@@ -58,32 +47,25 @@ resource "azurerm_windows_virtual_machine" "example-vm" {
   admin_username      =  data.azurerm_key_vault_secret.vm_username.value
   admin_password      =  data.azurerm_key_vault_secret.vm_password.value
   depends_on = [data.azurerm_key_vault_secret.vm_password, data.azurerm_key_vault_secret.vm_username]
-
   identity {
       type = "SystemAssigned"
-    }
-  
+  }
   network_interface_ids = [
     azurerm_network_interface.example-nic.id
   ]
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
-
-    source_image_id = data.azurerm_shared_image.example-sig.id
-    #depends_on = [azurerm_key_vault_secret.vm_password, azurerm_key_vault_secret.vm_username]
-    
-   lifecycle {
-    ignore_changes = [
+  source_image_id = data.azurerm_shared_image.example-sig.id
+  lifecycle {
+     ignore_changes = [
       identity
 
     ]  
-    }
-  
-
+   }
 }
+
 # Fetch the existing Key Vault
 data "azurerm_key_vault" "kv" {
   name                = "kvpacker01"
@@ -100,23 +82,24 @@ resource "azurerm_key_vault_access_policy" "vm_access_policy" {
   secret_permissions = [
     "Get", "List",
   ]
-  #depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
 # Fetch the username and password secrets from Key Vault
 data "azurerm_key_vault_secret" "vm_username" {
   name         = "vmUsername"               # Name of the username secret in the Key Vault
   key_vault_id = data.azurerm_key_vault.kv.id
-  #depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
 data "azurerm_key_vault_secret" "vm_password" {
   name         = "vmPassword"               # Name of the password secret in the Key Vault
   key_vault_id = data.azurerm_key_vault.kv.id
-  #depends_on = [azurerm_windows_virtual_machine.example-vm]
 }
 
-  output "vm_private_ip" {
+ output "vm_private_ip" {
   description = "The private IP address of the Windows VM"
   value       = azurerm_network_interface.example-nic.private_ip_address
+}
+
+output "current_subscription_display_name" {
+  value = data.azurerm_subscription.current.display_name
 }
