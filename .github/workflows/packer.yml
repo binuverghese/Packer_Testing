@@ -12,9 +12,9 @@ jobs:
     env:
       ROOT_PATH : '${{github.workspace}}/windows'
 
-    # permissions:
-    #   id-token: write
-    #   contents: read
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - name: Checkout repository
@@ -31,7 +31,6 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
         #enable-AzPSSession: true
-        
         
 
     - name: Init Packer image
