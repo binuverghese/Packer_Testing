@@ -12,9 +12,9 @@ jobs:
     env:
       ROOT_PATH : '${{github.workspace}}/windows'
 
-    permissions:
-      id-token: write
-      contents: read
+    # permissions:
+    #   id-token: write
+    #   contents: read
 
     steps:
     - name: Checkout repository
