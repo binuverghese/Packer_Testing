@@ -39,5 +39,4 @@ source "azure-arm"  "windowsimage" {
         image_version   = "5.2.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
         resource_group  = "rg-packer-acg"
     }  
-
 }
