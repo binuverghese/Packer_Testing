@@ -86,7 +86,7 @@ jobs:
           #ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_ID}}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
-          auth-type: 'managed' #IDENTITY
+          auth-type: IDENTITY
           
         run: terraform init -input=false -backend-config="resource_group_name=$RESOURCE_GROUP" -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME"  
         
