@@ -26,11 +26,13 @@ jobs:
     - name: Authenticate to Azure 
       uses: azure/login@v2
       with:
+        auth-type: IDENTITY
         client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
         #enable-AzPSSession: true
-        auth-type: IDENTITY
+        
+        
 
     - name: Init Packer image
       working-directory: ${{env.ROOT_PATH}}
