@@ -3,14 +3,15 @@ name: Build Packer Image and deploy VM
 on:
   push:
     branches:
-      #- main
-       - test
+      - test
 jobs:
   packer:
     name: Build packer and Publish Image to SIG
     runs-on: [self-hosted,test]
     env:
       ROOT_PATH : '${{github.workspace}}/windows'
+      IMAGE_VERSION: v1.0.${{ github.run_number }}
+      APP_VERSION: v1.0.${{ github.run_number }}
 
     permissions:
       id-token: write
@@ -31,17 +32,16 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
         enable-AzPSSession: true
-        
 
     - name: Init Packer image
       working-directory: ${{env.ROOT_PATH}}
       run: 
         packer init .
 
-    - name:  Build Packer image
+    - name: Build Packer image
       working-directory: ${{env.ROOT_PATH}}
       run:
-        packer build .
+        packer build -var "image_version=${{ env.IMAGE_VERSION }}" -var "app_version=${{ env.APP_VERSION }}" .
 
   terraform:
     name: Deploy VM using SIG
