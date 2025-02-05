@@ -83,9 +83,9 @@ jobs:
          tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
          auth-type: IDENTITY
-      - name: 'Run Az commands'
-        run: |
-         az account show
+      # - name: 'Run Az commands'
+      #   run: |
+      #    az account show
 
       - name: Terraform Init 
         # working-directory: ${{env.ROOT_PATH}}
