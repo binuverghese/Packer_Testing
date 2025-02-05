@@ -24,11 +24,11 @@ source "azure-arm" "rhel_image" {
 
   ssh_clear_authorized_keys  = true
   ssh_port  =  22
+  temp_compute_name = "packerlinux-vm-poc"
+  temp_nic_name     = "packerlinux-nic-poc"
+  build_resource_group_name = "Test_VM"
 
-
-
-   ##Sourece Image Output details##
- location = "West US"
+ #location = "West US"
 
   #Define the network
   virtual_network_resource_group_name = "Test_VM"
