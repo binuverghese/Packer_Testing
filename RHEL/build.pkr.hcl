@@ -12,7 +12,7 @@ build {
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd",
       "echo 'Sleeping for 5 seconds to ensure httpd service starts properly...'",
-      "sleep 5",
+      "sleep 15",
       "echo 'Build provisioning complete!'"
     ]
   }
@@ -20,7 +20,7 @@ build {
   provisioner "shell" {
     inline = [
       "echo 'Starting sleep...'",
-      "sleep 360",
+      "sleep 60",
       "echo 'Sleep completed.'"
     ]
   }

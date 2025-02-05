@@ -6,7 +6,7 @@ on:
       - test
 jobs:
   packer:
-    name: Build packer and Publish Image to SIG
+    name: Build Linux image and Publish Image to SIG
     runs-on: self-hosted
     env:
       #ROOT_PATH : '${{github.workspace}}/windows'
@@ -32,16 +32,32 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
         #enable-AzPSSession: true
         
+    - name: Azure CLI script
+      uses: azure/cli@v2
+      with:
+        azcliversion: latest
+        inlineScript: |
+            az account show
 
     - name: Init Packer image
       working-directory: ${{env.ROOT_PATH}}
       run: 
         packer init .
+        
+    - name: fmt Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer fmt .
+
+    - name: validation Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer validate .
 
     - name:  Build Packer image
       working-directory: ${{env.ROOT_PATH}}
       run:
-        packer build .
+        packer build -debug .
 
 
   # terraform:
