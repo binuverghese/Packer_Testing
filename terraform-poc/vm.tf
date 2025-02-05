@@ -39,8 +39,36 @@ resource "azurerm_network_interface" "example-nic" {
   }
 }
 #Create a Windows Virtual Machine
-resource "azurerm_windows_virtual_machine" "example-vm" {
-  name                = "packerimgdemo"
+# resource "azurerm_windows_virtual_machine" "example-vm" {
+#   name                = "packerimgdemo"
+#   resource_group_name = data.azurerm_resource_group.example.name
+#   location            = data.azurerm_resource_group.example.location
+#   size                = "Standard_D2s_v3"
+#   admin_username      =  data.azurerm_key_vault_secret.vm_username.value
+#   admin_password      =  data.azurerm_key_vault_secret.vm_password.value
+#   depends_on = [data.azurerm_key_vault_secret.vm_password, data.azurerm_key_vault_secret.vm_username]
+#   identity {
+#       type = "SystemAssigned"
+#   }
+#   network_interface_ids = [
+#     azurerm_network_interface.example-nic.id
+#   ]
+#   os_disk {
+#     caching              = "ReadWrite"
+#     storage_account_type = "Standard_LRS"
+#   }
+#   source_image_id = data.azurerm_shared_image.example-sig.id
+#   lifecycle {
+#      ignore_changes = [
+#       identity
+
+#     ]  
+#    }
+# }
+#Create a Linux  Virtual Machine
+
+resource "azurerm_linux_virtual_machine" "example-vm" {
+  name                = "linuxvm-poctest"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = data.azurerm_resource_group.example.location
   size                = "Standard_D2s_v3"
