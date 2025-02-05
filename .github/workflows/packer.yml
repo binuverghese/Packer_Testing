@@ -7,11 +7,9 @@ on:
 jobs:
   packer:
     name: Build packer and Publish Image to SIG
-    runs-on: [self-hosted,test]
+    runs-on: self-hosted
     env:
       ROOT_PATH : '${{github.workspace}}/windows'
-      IMAGE_VERSION: v1.0.${{ github.run_number }}
-      APP_VERSION: v1.0.${{ github.run_number }}
 
     permissions:
       id-token: write
@@ -32,130 +30,132 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
         enable-AzPSSession: true
+        
 
     - name: Init Packer image
       working-directory: ${{env.ROOT_PATH}}
       run: 
         packer init .
 
-    - name: Build Packer image
+    - name:  Build Packer image
       working-directory: ${{env.ROOT_PATH}}
       run:
-        packer build -var "image_version=${{ env.IMAGE_VERSION }}" -var "app_version=${{ env.APP_VERSION }}" .
+        packer build .
 
-  terraform:
-    name: Deploy VM using SIG
-    runs-on: [Linux] #[self-hosted,test]
-    defaults:
-        run:
-            shell: bash
-            working-directory: '${{github.workspace}}/terraform-poc' 
+
+  # terraform:
+  #   name: Deploy VM using SIG
+  #   runs-on: [Linux] #[self-hosted,test]
+  #   defaults:
+  #       run:
+  #           shell: bash
+  #           working-directory: '${{github.workspace}}/terraform-poc' 
         
-    env:
-      #ROOT_PATH : '${{github.workspace}}\terraform-poc' 
-      TF_LOG: INFO
-    permissions:
-      id-token: write
-      contents: read
-    needs: packer
+  #   env:
+  #     #ROOT_PATH : '${{github.workspace}}\terraform-poc' 
+  #     TF_LOG: INFO
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   needs: packer
         
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+  #     - name: Set up Terraform
+  #       uses: hashicorp/setup-terraform@v2
 
-      - name: Set up Azure CLI
-        uses: azure/login@v2
-        with:
-         client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
-         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
-         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-         auth-type: IDENTITY
-      - name: 'Run Az commands'
-        run: |
-         az account show
+  #     - name: Set up Azure CLI
+  #       uses: azure/login@v2
+  #       with:
+  #        client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
+  #        tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
+  #        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+  #        auth-type: IDENTITY
+  #     - name: 'Run Az commands'
+  #       run: |
+  #        az account show
 
-      - name: Terraform Init 
-        # working-directory: ${{env.ROOT_PATH}}
-        env:
-          STORAGE_ACCOUNT: "tfstatewells"
-          CONTAINER_NAME: "terraform"
-          RESOURCE_GROUP: "Test_VM"
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
-          #ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_ID}}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
-          auth-type: IDENTITY
+  #     - name: Terraform Init 
+  #       # working-directory: ${{env.ROOT_PATH}}
+  #       env:
+  #         STORAGE_ACCOUNT: "tfstatewells"
+  #         CONTAINER_NAME: "terraform"
+  #         RESOURCE_GROUP: "Test_VM"
+  #         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
+  #         #ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_ID}}
+  #         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+  #         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
+  #         auth-type: IDENTITY
           
-        run: terraform init -input=false -backend-config="resource_group_name=$RESOURCE_GROUP" -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME"  
+  #       run: terraform init -input=false -backend-config="resource_group_name=$RESOURCE_GROUP" -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME"  
         
 
-        #Run Terraform Plan
+  #       #Run Terraform Plan
 
-      - name: Terraform plan
+  #     - name: Terraform plan
         
-        working-directory: '${{github.workspace}}/terraform-poc' 
-        run: 
-         terraform plan -no-color
-        env:
-          STORAGE_ACCOUNT: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}
-          CONTAINER_NAME: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}
-          RESOURCE_GROUP: ${{ secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME }}
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
-          auth-type: IDENTITY
+  #       working-directory: '${{github.workspace}}/terraform-poc' 
+  #       run: 
+  #        terraform plan -no-color
+  #       env:
+  #         STORAGE_ACCOUNT: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}
+  #         CONTAINER_NAME: ${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}
+  #         RESOURCE_GROUP: ${{ secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME }}
+  #         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
+  #         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+  #         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
+  #         auth-type: IDENTITY
   
-       # Run Terraform apply
-      - name: Terraform Apply
+  #      # Run Terraform apply
+  #     - name: Terraform Apply
         
-        working-directory: '${{github.workspace}}/terraform-poc'
-        run: 
-         terraform apply -auto-approve
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
-          auth-type: IDENTITY
-     # Give execute permission to create_inventory.sh
-      - name: Make create_inventory.sh executable
-        run: chmod +x ./create_inventory.sh
+  #       working-directory: '${{github.workspace}}/terraform-poc'
+  #       run: 
+  #        terraform apply -auto-approve
+  #       env:
+  #         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
+  #         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+  #         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}
+  #         auth-type: IDENTITY
+  #    # Give execute permission to create_inventory.sh
+  #     - name: Make create_inventory.sh executable
+  #       run: chmod +x ./create_inventory.sh
      
-   # - name: Get private IP address
-   #   id: get_ip
-   #   run: |
-   #       VM_PRIVATE_IP=$(terraform output -raw vm_private_ip || echo "no-ip")
-   #       if [[ "$VM_PRIVATE_IP" == "no-ip" ]]; then
-   #       echo "Failed to fetch VM private IP."
-   #       exit 1
-   #       fi
-   #       echo "Private IP fetched: $VM_PRIVATE_IP"  
-   #   env:
-   #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
-   #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-   #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}    
+  #  # - name: Get private IP address
+  #  #   id: get_ip
+  #  #   run: |
+  #  #       VM_PRIVATE_IP=$(terraform output -raw vm_private_ip || echo "no-ip")
+  #  #       if [[ "$VM_PRIVATE_IP" == "no-ip" ]]; then
+  #  #       echo "Failed to fetch VM private IP."
+  #  #       exit 1
+  #  #       fi
+  #  #       echo "Private IP fetched: $VM_PRIVATE_IP"  
+  #  #   env:
+  #  #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
+  #  #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+  #  #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}    
 
-      - name: Generate Ansible Inventory
-        run: ./create_inventory.sh
-        working-directory: '${{github.workspace}}/terraform-poc'
-        env:
-         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
-         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}   
-         auth-type: IDENTITY 
+  #     - name: Generate Ansible Inventory
+  #       run: ./create_inventory.sh
+  #       working-directory: '${{github.workspace}}/terraform-poc'
+  #       env:
+  #        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID1 }}
+  #        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+  #        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID1 }}   
+  #        auth-type: IDENTITY 
        
-      - name: Set up Ansible
-        run: sudo apt-get install -y ansible
+  #     - name: Set up Ansible
+  #       run: sudo apt-get install -y ansible
 
-     # - name: Install Ansible
-     #   run: |
-     #       sudo apt update
-     #       sudo apt install -y ansible jq    
+  #    # - name: Install Ansible
+  #    #   run: |
+  #    #       sudo apt update
+  #    #       sudo apt install -y ansible jq    
 
 
-      - name: Run Ansible Playbook
-        working-directory: '${{github.workspace}}/ansible'
-        run: |
-         ansible-playbook -i inventory.ini service.yml       
+  #     - name: Run Ansible Playbook
+  #       working-directory: '${{github.workspace}}/ansible'
+  #       run: |
+  #        ansible-playbook -i inventory.ini service.yml       
