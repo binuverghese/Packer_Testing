@@ -50,7 +50,7 @@ jobs:
     - name:  Build Packer image
       working-directory: ${{env.ROOT_PATH}}
       run:
-        packer build -debug .
+        packer build  .
 
 
   # terraform:

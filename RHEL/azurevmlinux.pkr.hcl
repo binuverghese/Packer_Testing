@@ -22,7 +22,7 @@ source "azure-arm" "rhel_image" {
   communicator    = "ssh"
   ssh_username               = "packerlinux"
 
-  ssh_clear_authorized_keys  = false
+  ssh_clear_authorized_keys  = true
   ssh_port  =  22
 
 
