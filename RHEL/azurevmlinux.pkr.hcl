@@ -12,10 +12,11 @@ source "azure-arm" "rhel_image" {
 
   # Specify the base image
   vm_size             = "Standard_B2s"
-  os_type             = "Linux"
+  os_type             = "PlatformImage"
   image_publisher     = "RedHat"
   image_offer         = "RHEL"
-  image_sku           = "8-lvm-gen2" # Adjust for the RHEL version and generation you need
+  image_sku           = "8-lvm-gen2"
+  image_version       =  "latest" # Adjust for the RHEL version and generation you need
   os_disk_size_gb     =  128
   managed_image_storage_account_type = "Premium_LRS"
   #os_disk_type = "Premium_LRS"
