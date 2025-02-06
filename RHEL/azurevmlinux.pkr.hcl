@@ -12,7 +12,7 @@ source "azure-arm" "rhel_image" {
 
   # Specify the base image
   vm_size             = "Standard_B2s"
-  os_type             = "PlatformImage"
+  os_type             = "Linux"
   image_publisher     = "RedHat"
   image_offer         = "RHEL"
   image_sku           = "8-lvm-gen2"
