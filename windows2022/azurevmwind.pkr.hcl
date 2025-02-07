@@ -24,7 +24,7 @@ source "azure-arm" "windowsimage-2022" {
   virtual_network_resource_group_name = "Test_VM"
   virtual_network_name                = "v-network"
   virtual_network_subnet_name         = "subnet1"
-  temp_compute_name = "packerwin2022-vm-poc"
+  temp_compute_name = "win22-vm-poc"
   temp_nic_name     = "packerwin2022-nic-poc"
   build_resource_group_name = "Test_VM"
   temp_os_disk_name  = "packerwin2022-osdisk-poc"
