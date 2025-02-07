@@ -19,10 +19,11 @@ source "azure-arm" "windowsimage-2019" {
   winrm_timeout   = "10m"
   winrm_insecure  = true
   winrm_username  = "packer"
-  temp_compute_name = "packerwin2019-vm-poc"
-  temp_nic_name     = "packerwin2019-nic-poc"
+  temp_compute_name = "win2019-vm-poc"
+  temp_nic_name     = "win2019-nic-poc"
   build_resource_group_name = "Test_VM"
-  temp_os_disk_name  = "packerwin2019-osdisk-poc"
+  temp_os_disk_name  = "win2019-osdisk-poc"
+  skip_create_build_key_vault = true
 
   #Define the network 
   virtual_network_resource_group_name = "Test_VM"
