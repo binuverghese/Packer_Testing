@@ -41,6 +41,7 @@ source "azure-arm" "windowsimage-2019" {
   }
 }
 
+###  Windows 2022 Image Build ###
 source "azure-arm" "windowsimage-2022" {
   #Tags
   azure_tags = {
