@@ -39,7 +39,7 @@ source "azure-arm" "rhel_image" {
   shared_image_gallery_destination {
     subscription   = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
     gallery_name   = "AzurepackerImages"
-    image_name     = "redhatlinux-img-definition"
+    image_name     = "linux8x64"
     #image_version  = "4.0.0"
     image_version = formatdate("YYYY.MMDD.hhmm", timestamp())
     resource_group = "rg-packer-acg"
