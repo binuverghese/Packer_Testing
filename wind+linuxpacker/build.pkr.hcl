@@ -54,7 +54,7 @@ build {
 
   ####Linux Build provisioniners
  provisioner "shell" {
-  only = ["source.azure-arm.rhel_image"]
+  only = ["azure-arm.rhel_image"]
     inline = [
       "echo 'Starting system update...'",
       "sudo yum update -y",
@@ -69,7 +69,7 @@ build {
   }
 
   provisioner "shell" {
-    only = ["source.azure-arm.rhel_image"]
+    only = ["azure-arm.rhel_image"]
     inline = [
       "echo 'Starting sleep...'",
       "sleep 60",
