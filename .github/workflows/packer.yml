@@ -12,7 +12,7 @@ jobs:
       #ROOT_PATH : '${{github.workspace}}/windows2019'
       #ROOT_PATH : '${{github.workspace}}/RHEL'
       #ROOT_PATH : '${{github.workspace}}/windows2022'
-      ROOT_PATH : '${{github.workspace}}/windows'
+      ROOT_PATH : '${{github.workspace}}/wind+linuxpacker'
 
     permissions:
       id-token: write
