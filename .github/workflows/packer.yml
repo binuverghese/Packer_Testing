@@ -6,12 +6,13 @@ on:
       - test
 jobs:
   packer:
-    name: Build Linux image and Publish Image to SIG
+    name: Build windows image and Publish Image to SIG
     runs-on: self-hosted
     env:
-      ROOT_PATH : '${{github.workspace}}/windows2019'
+      #ROOT_PATH : '${{github.workspace}}/windows2019'
       #ROOT_PATH : '${{github.workspace}}/RHEL'
       #ROOT_PATH : '${{github.workspace}}/windows2022'
+      ROOT_PATH : '${{github.workspace}}/windows'
 
     permissions:
       id-token: write
