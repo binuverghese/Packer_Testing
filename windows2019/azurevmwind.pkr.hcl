@@ -23,7 +23,7 @@ source "azure-arm" "windowsimage-2019" {
   temp_nic_name     = "win2019-nic-poc"
   build_resource_group_name = "Test_VM"
   temp_os_disk_name  = "win2019-osdisk-poc"
-  skip_create_build_key_vault = true
+  #skip_create_build_key_vault = true
 
   #Define the network 
   virtual_network_resource_group_name = "Test_VM"
