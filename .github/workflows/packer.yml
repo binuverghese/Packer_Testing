@@ -9,9 +9,9 @@ jobs:
     name: Build Linux image and Publish Image to SIG
     runs-on: self-hosted
     env:
-      #ROOT_PATH : '${{github.workspace}}/windows'
+      ROOT_PATH : '${{github.workspace}}/windows2019'
       #ROOT_PATH : '${{github.workspace}}/RHEL'
-      ROOT_PATH : '${{github.workspace}}/windows2022'
+      #ROOT_PATH : '${{github.workspace}}/windows2022'
 
     permissions:
       id-token: write

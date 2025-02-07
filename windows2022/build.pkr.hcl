@@ -1,5 +1,5 @@
 build {
-    sources = [ "source.azure-arm.windowsimage" ]
+    sources = [ "source.azure-arm.windowsimage-2022" ]
 
  # Provisioner: Install IIS (as an example)
   provisioner "powershell" {

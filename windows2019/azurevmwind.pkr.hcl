@@ -1,4 +1,4 @@
-source "azure-arm" "windowsimage" {
+source "azure-arm" "windowsimage-2019" {
   #Tags
   azure_tags = {
     environment = "dev"
@@ -19,21 +19,23 @@ source "azure-arm" "windowsimage" {
   winrm_timeout   = "10m"
   winrm_insecure  = true
   winrm_username  = "packer"
+  temp_compute_name = "packerwin2019-vm-poc"
+  temp_nic_name     = "packerwin2019-nic-poc"
+  build_resource_group_name = "Test_VM"
+  temp_os_disk_name  = "packerwin2019-osdisk-poc"
 
   #Define the network 
   virtual_network_resource_group_name = "Test_VM"
   virtual_network_name                = "v-network"
   virtual_network_subnet_name         = "subnet1"
 
-  ##Source Image Output details##
-  location = "West US"
 
   ### Build Image publish to Target Azure compute galleries###
   shared_image_gallery_destination {
     subscription   = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
     gallery_name   = "AzurepackerImages"
-    image_name     = "windDc2022"
-    image_version  = "5.2.0" ##${formatdate("YYYY.MMDD.hhmm", timestamp())}"
+    image_name     = "win2019dcx64"
+    image_version  = "${formatdate("YYYY.MMDD.hhmm", timestamp())}"
     resource_group = "rg-packer-acg"
   }
 }
