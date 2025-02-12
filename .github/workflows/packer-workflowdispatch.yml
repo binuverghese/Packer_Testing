@@ -9,7 +9,7 @@ on:
       environment:
         description: "Select the OS to build"
         required: true
-        default: "windows2019"
+        #default: "windows2019"
         type: choice
         options:
           - windows2019
