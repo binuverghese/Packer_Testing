@@ -1,58 +1,58 @@
-# name: Build Packer Image and deploy VM
+name: Build Packer Image and deploy VM
 
-# on:
-#   push:
-#     branches:
-#       - test
-# jobs:
-#   packer:
-#     name: Build windows image and Publish Image to SIG
-#     runs-on: self-hosted
-#     env:
-#       #ROOT_PATH : '${{github.workspace}}/windows2019'
-#       #ROOT_PATH : '${{github.workspace}}/RHEL'
-#       #ROOT_PATH : '${{github.workspace}}/windows2022'
-#       ROOT_PATH : '${{github.workspace}}/windowsimages'
+on:
+  push:
+    branches:
+      - test
+jobs:
+  packer:
+    name: Build windows image and Publish Image to SIG
+    runs-on: self-hosted
+    env:
+      #ROOT_PATH : '${{github.workspace}}/windows2019'
+      #ROOT_PATH : '${{github.workspace}}/RHEL'
+      #ROOT_PATH : '${{github.workspace}}/windows2022'
+      ROOT_PATH : '${{github.workspace}}/windowsimages'
 
-#     permissions:
-#       id-token: write
-#       contents: read
+    permissions:
+      id-token: write
+      contents: read
 
-#     steps:
-#     - name: Checkout repository
-#       uses: actions/checkout@v2
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-#     - name: Set up Packer
-#       uses: hashicorp/setup-packer@v2
+    - name: Set up Packer
+      uses: hashicorp/setup-packer@v2
 
-#     - name: Authenticate to Azure 
-#       uses: azure/login@v2
-#       with:
-#         auth-type: IDENTITY
-#         client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
-#         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
-#         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
-#         #enable-AzPSSession: true
+    - name: Authenticate to Azure 
+      uses: azure/login@v2
+      with:
+        auth-type: IDENTITY
+        client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+        #enable-AzPSSession: true
 
-#     - name: Init Packer image
-#       working-directory: ${{env.ROOT_PATH}}
-#       run: 
-#         packer init .
+    - name: Init Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer init .
 
-#     - name: fmt Packer image
-#       working-directory: ${{env.ROOT_PATH}}
-#       run: 
-#         packer fmt .
+    - name: fmt Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer fmt .
 
-#     - name: validation Packer image
-#       working-directory: ${{env.ROOT_PATH}}
-#       run: 
-#         packer validate .
+    - name: validation Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer validate .
 
-#     - name:  Build Packer image
-#       working-directory: ${{env.ROOT_PATH}}
-#       run:
-#         packer build  .
+    - name:  Build Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run:
+        packer build  .
 
 
   # terraform:

@@ -1,0 +1,66 @@
+name: Build Packer Image and Deploy VM
+
+on:
+  push:
+    branches:
+      - test
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the OS to build"
+        required: true
+        default: "windows2019"
+        type: choice
+        options:
+          - windows2019
+          - RHEL
+          - windows2022
+          - windowsimages
+
+jobs:
+  packer:
+    name: Build Windows Image and Publish Image to SIG
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        environment: 
+          - ${{ github.event.inputs.environment || 'windows2019' }}
+
+    env:
+      ROOT_PATH: ${{ github.workspace }}/${{ matrix.environment }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v2
+
+      - name: Authenticate to Azure
+        uses: azure/login@v2
+        with:
+          auth-type: IDENTITY
+          client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+
+      - name: Init Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer init .
+
+      - name: Format Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer fmt .
+
+      - name: Validate Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer validate .
+
+      - name: Build Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer build .

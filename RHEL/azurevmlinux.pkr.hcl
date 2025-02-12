@@ -19,7 +19,6 @@ source "azure-arm" "rhel_image" {
   image_version       =  "latest" # Adjust for the RHEL version and generation you need
   os_disk_size_gb     =  128
   managed_image_storage_account_type = "Premium_LRS"
-  #os_disk_type = "Premium_LRS"
   communicator        = "ssh"
   ssh_username        = "packerlinux"
   ssh_clear_authorized_keys  = true
