@@ -6,7 +6,7 @@ on:
       #- test
   workflow_dispatch:
     inputs:
-      environment:
+      OSVersion:
         description: "Select the OS to build"
         required: true
         #default: "windows2019"
@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         environment: 
-          -  ${{ github.event.inputs.environment }}
+          -  ${{ github.event.inputs.OSVersion }}
 
     env:
       ROOT_PATH: ${{ github.workspace }}/${{ matrix.environment }}
