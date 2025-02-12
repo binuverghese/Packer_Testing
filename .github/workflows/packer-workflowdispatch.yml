@@ -1,25 +1,22 @@
-name: Build Packer Image and Deploy VM
+name: Build Packer Images and Publish to ASIG
 
 on:
-  #push:
-   # branches:
-      #- test
+  
   workflow_dispatch:
     inputs:
       OSVersion:
         description: "Select the OS to build"
         required: true
-        #default: "windows2019"
         type: choice
         options:
           - windows2019
           - RHEL
           - windows2022
-          - windowsimages
+          - windowsimages  #  If we run this OS, it will build both Windows 2019 and Windows 2022 images
 
 jobs:
   packer:
-    name: Build Windows Image and Publish Image to SIG
+    name: Build Windows and Linux Images and Publish Image to ASIG
     runs-on: self-hosted
 
     strategy:

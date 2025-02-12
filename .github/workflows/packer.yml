@@ -1,4 +1,4 @@
-name: Build Packer Image and deploy VM
+name: Build Packer Images and Publish to ASIG
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - test
 jobs:
   packer:
-    name: Build windows image and Publish Image to SIG
+    name: Build windows & Linux images and Publish Images to ASIG
     runs-on: self-hosted
     env:
       #ROOT_PATH : '${{github.workspace}}/windows2019'
       #ROOT_PATH : '${{github.workspace}}/RHEL'
       #ROOT_PATH : '${{github.workspace}}/windows2022'
-      ROOT_PATH : '${{github.workspace}}/windowsimages'
+      ROOT_PATH : '${{github.workspace}}/windowsimages' # If we run this OS, it will build both Windows 2019 and Windows 2022 images
 
     permissions:
       id-token: write

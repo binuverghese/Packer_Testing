@@ -1,4 +1,4 @@
-name: Build Packer Image and deploy VM
+name: Build Packer Images and Publish to ASIG
 
 on:
     push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
     packer:
-        name: Build windows image and Publish Image to SIG
+        name: Build windows & Linux images and Publish Images to ASIG
         runs-on: self-hosted
 
         strategy:
@@ -16,7 +16,8 @@ jobs:
                     - windows2019
                     - RHEL
                     - windows2022
-                    #- windowsimages
+                    #- windowsimages   #  If we run this OS, it will build both Windows 2019 and Windows 2022 images
+
 
         env:
             ROOT_PATH: ${{ github.workspace }}/${{ matrix.environment }}
