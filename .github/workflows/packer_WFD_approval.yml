@@ -24,7 +24,7 @@ jobs:
           - ${{ github.event.inputs.OSVersion }}
 
     env:
-      ROOT_PATH: ${{ github.workspace }}/${{ github.event.inputs.OSVersion }}
+      ROOT_PATH: ${{ github.workspace }}/${{matrix.environment}} 
 
     permissions:
       id-token: write
@@ -65,7 +65,7 @@ jobs:
     environment: approval-required  # Enforce manual approval before running this job
 
     env:
-      ROOT_PATH: ${{ github.workspace }}/${{ github.event.inputs.OSVersion }}
+      ROOT_PATH: ${{ github.workspace }}/${{ matrix.environment }}
 
     permissions:
       id-token: write
