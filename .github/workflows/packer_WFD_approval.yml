@@ -1,0 +1,80 @@
+name: Build Packer Images and Publish to ASIG
+
+on:
+  workflow_dispatch:
+    inputs:
+      OSVersion:
+        description: "Select the OS to build"
+        required: true
+        type: choice
+        options:
+          - windows2019
+          - RHEL
+          - windows2022
+          - windowsimages  # If selected, it will build both Windows 2019 and Windows 2022 images.
+
+jobs:
+  pre_build:
+    name: Validate and Prepare Packer Image
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        environment: 
+          - ${{ github.event.inputs.OSVersion }}
+
+    env:
+      ROOT_PATH: ${{ github.workspace }}/${{ github.event.inputs.OSVersion }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v2
+
+      - name: Authenticate to Azure
+        uses: azure/login@v2
+        with:
+          auth-type: IDENTITY
+          client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+
+      - name: Init Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer init .
+
+      - name: Format Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer fmt .
+
+      - name: Validate Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer validate .
+
+  packer_build:
+    name: Packer Build (Requires Approval)
+    needs: pre_build
+    runs-on: self-hosted
+
+    environment: approval-required  # Enforce manual approval before running this job
+
+    env:
+      ROOT_PATH: ${{ github.workspace }}/${{ github.event.inputs.OSVersion }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Packer image
+        working-directory: ${{ env.ROOT_PATH }}
+        run: packer build .
