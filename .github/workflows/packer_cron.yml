@@ -1,20 +1,8 @@
-name: Build Packer Images and Publish to ASIG
+name: Cronjob -Build Packer Images and Publish to ASIG
 
 on:
-  workflow_dispatch:  # Allows manual triggering
-    inputs:
-      OSVersion:
-        description: "Select the OS to build"
-        required: true
-        type: choice
-        options:
-          - windows2019
-          - RHEL
-          - windows2022
-          - windowsimages  # If selected, it will build both Windows 2019 and Windows 2022 images.
-
   schedule:
-    - cron: "00 6 * * 5"  # Runs every  friday day at 11:20:00 AM UTC
+    - cron: "30 6 * * 5"  # Runs at 6:30 AM UTC (12:00 PM IST) every day
 
 jobs:
   pre_build:
@@ -23,8 +11,11 @@ jobs:
 
     strategy:
       matrix:
-        environment: 
-          - ${{ github.event.inputs.OSVersion || 'windows2019' }}  # Default OS for scheduled runs
+        environment:
+          - windows2019
+          - RHEL
+          - windows2022
+          #- windowsimages
 
     env:
       ROOT_PATH: ${{ github.workspace }}/${{ matrix.environment }}
@@ -66,8 +57,12 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        environment: 
-          - ${{ github.event.inputs.OSVersion }}
+        environment:
+          - windows2019
+          - RHEL
+          - windows2022
+          #- windowsimages # If selected, it will build both Windows 2019 and Windows 2022 images.
+
     environment: approval-required  # Requires manual approval before executing
 
     env:
