@@ -33,33 +33,35 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
 
       - name: Fetch and Delete Old Image Versions
+        shell: pwsh
         run: |
-          echo "Fetching image versions..."
-          IMAGE_VERSIONS=$(az sig image-version list \
-            --resource-group $RESOURCE_GROUP \
-            --gallery-name $IMAGE_GALLERY \
-            --gallery-image-definition $IMAGE_DEFINITION \
-            --query "[].{version:name}" \
-            --output tsv | sort -V)
-
-          echo "Image Versions Found:"
-          echo "$IMAGE_VERSIONS"
-
-          COUNT=$(echo "$IMAGE_VERSIONS" | wc -l)
-          echo "Total versions: $COUNT"
-
-          if [ "$COUNT" -gt "$KEEP_VERSIONS" ]; then
-            DELETE_COUNT=$((COUNT - KEEP_VERSIONS))
-            DELETE_VERSIONS=$(echo "$IMAGE_VERSIONS" | head -n "$DELETE_COUNT")
-
-            for VERSION in $DELETE_VERSIONS; do
-              echo "Deleting version: $VERSION"
-              az sig image-version delete \
-                --resource-group $RESOURCE_GROUP \
-                --gallery-name $IMAGE_GALLERY \
-                --gallery-image-definition $IMAGE_DEFINITION \
-                --gallery-image-version $VERSION
-            done
-          else
-            echo "No old versions to delete."
-          fi
+            Write-Output "Fetching image versions..."
+            $imageVersions = az sig image-version list `
+              --resource-group $env:RESOURCE_GROUP `
+              --gallery-name $env:IMAGE_GALLERY `
+              --gallery-image-definition $env:IMAGE_DEFINITION `
+              --query "[].{version:name}" `
+              --output tsv | Sort-Object
+  
+            Write-Output "Image Versions Found:"
+            Write-Output "$imageVersions"
+  
+            $count = ($imageVersions -split "`n").Count
+            Write-Output "Total versions: $count"
+  
+            if ($count -gt $env:KEEP_VERSIONS) {
+              $deleteCount = $count - [int]$env:KEEP_VERSIONS
+              $deleteVersions = ($imageVersions -split "`n") | Select-Object -First $deleteCount
+  
+              foreach ($version in $deleteVersions) {
+                Write-Output "Deleting version: $version"
+                az sig image-version delete `
+                  --resource-group $env:RESOURCE_GROUP `
+                  --gallery-name $env:IMAGE_GALLERY `
+                  --gallery-image-definition $env:IMAGE_DEFINITION `
+                  --gallery-image-version $version
+              }
+            } else {
+              Write-Output "No old versions to delete."
+            }
+  
