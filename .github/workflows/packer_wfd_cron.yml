@@ -13,7 +13,7 @@ on:
           - windows2022
           - windowsimages  # If selected, it will build both Windows 2019 and Windows 2022 images.
   schedule:
-    - cron: "30 5 * * *"   # Runs every Monday at 10:30 AM IST
+    - cron: "30 5 * * *"   # Runs every day at 10:30 AM IST
 jobs:
   pre_build:
     name: Validate and Prepare Packer Image
@@ -22,7 +22,8 @@ jobs:
     strategy:
       matrix:
         environment: 
-          - ${{ github.event.inputs.OSVersion }}
+          #- ${{ github.event.inputs.OSVersion }}
+          - ${{ github.event.inputs.OSVersion || 'windows2019' }}  # Default to windows2019 if no input is provided
 
     env:
       ROOT_PATH: ${{ github.workspace }}/${{matrix.environment}} 
