@@ -1,0 +1,65 @@
+name: Clean Up Old Images in Azure Image Gallery
+
+on:
+  schedule:
+    - cron: "00 14 * * 5"  # Runs every Monday at midnight UTC
+  workflow_dispatch:  # Allows manual execution
+
+jobs:
+  cleanup:
+    name: Delete Old Image Versions
+    runs-on: self-hosted
+
+    env:
+      IMAGE_GALLERY: "AzurepackerImages"
+      RESOURCE_GROUP: "rg-packer-acg"
+      IMAGE_DEFINITION: "win2022dcx64"
+      KEEP_VERSIONS: 2  # Number of latest versions to keep
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Authenticate to Azure
+        uses: azure/login@v2
+        with:
+          auth-type: IDENTITY
+          client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+
+      - name: Fetch and Delete Old Image Versions
+        run: |
+          echo "Fetching image versions..."
+          IMAGE_VERSIONS=$(az sig image-version list \
+            --resource-group $RESOURCE_GROUP \
+            --gallery-name $IMAGE_GALLERY \
+            --gallery-image-definition $IMAGE_DEFINITION \
+            --query "[].{version:name}" \
+            --output tsv | sort -V)
+
+          echo "Image Versions Found:"
+          echo "$IMAGE_VERSIONS"
+
+          COUNT=$(echo "$IMAGE_VERSIONS" | wc -l)
+          echo "Total versions: $COUNT"
+
+          if [ "$COUNT" -gt "$KEEP_VERSIONS" ]; then
+            DELETE_COUNT=$((COUNT - KEEP_VERSIONS))
+            DELETE_VERSIONS=$(echo "$IMAGE_VERSIONS" | head -n "$DELETE_COUNT")
+
+            for VERSION in $DELETE_VERSIONS; do
+              echo "Deleting version: $VERSION"
+              az sig image-version delete \
+                --resource-group $RESOURCE_GROUP \
+                --gallery-name $IMAGE_GALLERY \
+                --gallery-image-definition $IMAGE_DEFINITION \
+                --gallery-image-version $VERSION
+            done
+          else
+            echo "No old versions to delete."
+          fi
