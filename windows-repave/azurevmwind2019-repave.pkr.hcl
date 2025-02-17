@@ -43,7 +43,7 @@ source "azure-arm" "windowsimage-2019-repave" {
   shared_image_gallery_destination {
     subscription   = "1901eaa9-e98f-49b6-ac39-b1cd55defe19"
     gallery_name   = "AzurepackerImages"
-    image_name     = "win2019dcx64"
+    image_name     = "win2019x64-repave"
     image_version  = "${formatdate("YYYY.MMDD.hhmm", timestamp())}"
     resource_group = "rg-packer-acg"
   }
