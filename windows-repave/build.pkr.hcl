@@ -2,20 +2,22 @@ build {
     sources = [ "source.azure-arm.windowsimage-2019-repave" ]
 
 # Apply Windows Updates and Cleanup
-   provisioner "powershell" {
+  provisioner "powershell" {
   inline = [
-    "Write-Output 'Setting PSGallery repository to Trusted...'",
-    "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted",
-    "Write-Output 'Installing PSWindowsUpdate module...'",
-    "Install-Module PSWindowsUpdate -Force -Scope CurrentUser",
-    "Write-Output 'Importing PSWindowsUpdate module...'",
-    "Import-Module PSWindowsUpdate",
-    "Write-Output 'Listing available Windows updates...'",
-    "Get-WindowsUpdate -Verbose",
-    "Write-Output 'Installing Windows updates...'",
-    "Install-WindowsUpdate -AcceptAll -Install -AutoReboot"
-    ]
-  }
+    "Write-Output 'Starting Windows Update...'",
+    "New-Item -Path 'C:\\Windows\\Temp' -ItemType Directory -Force",
+    "Import-Module WindowsUpdateProvider -ErrorAction SilentlyContinue",
+    "$Updates = Get-WindowsUpdate",
+    "if ($Updates) {",
+    "    Write-Output 'Installing Windows Updates...'",
+    "    Install-WindowsUpdate -AcceptAll -AutoReboot | Out-File C:\\Windows\\Temp\\WindowsUpdate.log",
+    "    Write-Output 'Updates installed successfully.'",
+    "} else {",
+    "    Write-Output 'No updates available.'",
+    "}"
+  ]
+ }
+
 
 
 
