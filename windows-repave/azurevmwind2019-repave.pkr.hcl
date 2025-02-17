@@ -36,7 +36,7 @@ source "azure-arm" "windowsimage-2019-repave" {
     gallery_name   = "AzurepackerImages"
     image_name     = "win2019dcx64"
     image_version  = "latest"
-
+     resource_group = "rg-packer-acg"
   }
 
   ### Build Image publish to Target Azure compute galleries###
