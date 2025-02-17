@@ -19,8 +19,6 @@ build {
  }
 
 
-
-
   # Additional Cleanup (Optional)
   provisioner "powershell" {
     inline = [
