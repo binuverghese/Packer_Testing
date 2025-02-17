@@ -1,0 +1,59 @@
+name: Repave - Build Packer Images and Publish to ASIG
+
+on:
+  push:
+    branches:
+      - test
+jobs:
+  packer:
+    name: Build windows & Linux images and Publish Images to ASIG
+    runs-on: self-hosted
+    env:
+      #ROOT_PATH : '${{github.workspace}}/windows2019'
+      #ROOT_PATH : '${{github.workspace}}/RHEL'
+      #ROOT_PATH : '${{github.workspace}}/windows2022'
+      #ROOT_PATH : '${{github.workspace}}/windowsimages' # If we run this OS, it will build both Windows 2019 and Windows 2022 images
+      ROOT_PATH : '${{github.workspace}}/windows-repave' # If we run this OS, it will build both Windows 2019 and Windows 2022 images
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Packer
+      uses: hashicorp/setup-packer@v2
+
+    - name: Authenticate to Azure 
+      uses: azure/login@v2
+      with:
+        auth-type: IDENTITY
+        client-id: ${{ secrets.AZURE_CLIENT_ID1 }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
+        #enable-AzPSSession: true
+
+    - name: Init Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer init .
+
+    - name: fmt Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer fmt .
+
+    - name: validation Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run: 
+        packer validate .
+
+    - name:  Build Packer image
+      working-directory: ${{env.ROOT_PATH}}
+      run:
+        packer build  .
+
+
+        
