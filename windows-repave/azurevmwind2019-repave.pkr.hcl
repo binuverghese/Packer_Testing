@@ -23,7 +23,7 @@ source "azure-arm" "windowsimage-2019-repave" {
   temp_nic_name     = "win2019-nic-poc"
   build_resource_group_name = "Test_VM"
   temp_os_disk_name  = "win2019-osdisk-poc"
-  security_type     = "TrustedLaunch"
+  #security_type = "TrustedLaunch"
 
   #Define the network 
   virtual_network_resource_group_name = "Test_VM"
@@ -36,7 +36,7 @@ source "azure-arm" "windowsimage-2019-repave" {
     gallery_name   = "AzurepackerImages"
     image_name     = "win2019dcx64"
     image_version  = "latest"
-     resource_group = "rg-packer-acg"
+    resource_group = "rg-packer-acg"
   }
 
   ### Build Image publish to Target Azure compute galleries###

@@ -55,7 +55,13 @@ build {
 # Apply Windows Updates and Cleanup
    provisioner "powershell" {
     inline = [
-      "Install-Module PSWindowsUpdate -Force -Confirm:`$false"
+      "Write-Output 'Installing PSWindowsUpdate module...'",
+      "Install-Module PSWindowsUpdate -Force",
+      "Import-Module PSWindowsUpdate",
+      "Write-Output 'Listing available Windows updates...'",
+      "Get-WindowsUpdate -Verbose",
+      "Write-Output 'Installing available Windows updates...'",
+      "Install-WindowsUpdate -AcceptAll -Install -AutoReboot"
     ]
   }
 
