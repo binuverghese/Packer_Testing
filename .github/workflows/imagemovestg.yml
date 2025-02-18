@@ -48,30 +48,46 @@ jobs:
          # Export to GitHub Actions environment variable
         "IMAGE_LIST=$IMAGE_LIST" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
-    - name: Move Images to Storage
-      run: |
-        $RESOURCE_GROUP="Test_VM"
-        $GALLERY_NAME="AzurepackerImages"
-        $IMAGE_NAME="your-image-definition"
-        $STORAGE_ACCOUNT="tfstatewells"
-        $CONTAINER_NAME="image-backups"
-        foreach ($IMAGE_VERSION in $env:IMAGE_LIST -split "`n") {
-        for IMAGE_VERSION in $IMAGE_LIST; do
-          echo "Exporting $IMAGE_VERSION..."
-
-          # Export image version to storage as a VHD
-          az sig image-version show --resource-group $RESOURCE_GROUP \
-            --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME \
-            --gallery-image-version $IMAGE_VERSION --query "storageProfile.osDiskImage.uri" -o tsv > image_uri.txt
-
-          IMAGE_URI=$(cat image_uri.txt)
-
-          # Copy image to Azure Storage Account
-          az storage blob copy start --destination-container $CONTAINER_NAME \
-            --destination-blob "$IMAGE_NAME-$IMAGE_VERSION.vhd" --account-name $STORAGE_ACCOUNT \
-            --source-uri $IMAGE_URI
-
-        }
-        done
-
-    
+        - name: Move Old Image Versions to Storage
+        shell: pwsh
+        run: |
+          # Define variables
+          $RESOURCE_GROUP = "rg-packer-acg"
+          $GALLERY_NAME="AzurepackerImages"
+          $IMAGE_NAME="win2019dcx64"
+          $STORAGE_ACCOUNT = "tfstatewells"
+          $CONTAINER_NAME = "image-backups"
+      
+          # Get old image versions
+          $OLD_IMAGES = az sig image-version list `
+            --resource-group $RESOURCE_GROUP `
+            --gallery-name $GALLERY_NAME `
+            --gallery-image-definition $IMAGE_NAME `
+            --query "[?tags.retention!='keep'].name" `
+            --output json | ConvertFrom-Json
+      
+          if ($OLD_IMAGES -eq $null -or $OLD_IMAGES.Count -eq 0) {
+            Write-Output "No old images found to move."
+            exit 0
+          }
+      
+          # Loop through each image version and move it to storage
+          foreach ($IMAGE_VERSION in $OLD_IMAGES) {
+            Write-Output "Processing image version: $IMAGE_VERSION"
+            
+            # Export the image to a storage account
+            az sig image-version export `
+              --resource-group $RESOURCE_GROUP `
+              --gallery-name $GALLERY_NAME `
+              --gallery-image-definition $IMAGE_NAME `
+              --gallery-image-version $IMAGE_VERSION `
+              --target-name "$IMAGE_VERSION.vhd" `
+              --storage-account $STORAGE_ACCOUNT `
+              --storage-container $CONTAINER_NAME
+            
+            if ($?) {
+              Write-Output "Successfully moved image version $IMAGE_VERSION"
+            } else {
+              Write-Output "Failed to move image version $IMAGE_VERSION"
+            }
+          }
