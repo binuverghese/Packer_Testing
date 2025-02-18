@@ -2,8 +2,8 @@ build {
     sources = [ "source.azure-arm.windowsimage-2019-repave" ]
 
 # Apply Windows Updates and Cleanup
-  provisioner "powershell" {
-  inline = [
+    provisioner "powershell" {
+    inline = [
     "Write-Output 'Ensuring Temp Directory Exists...'",
     "New-Item -Path 'C:\\Windows\\Temp' -ItemType Directory -Force",
 
@@ -22,15 +22,16 @@ build {
 
     "Write-Output 'Checking for Windows Updates...'",
     "$Updates = Get-WUList",
-    "if (\$Updates) {",
+    "if ($Updates) {",
     "    Write-Output 'Installing Windows Updates...'",
     "    Get-WUInstall -AcceptAll -IgnoreReboot | Out-File C:\\Windows\\Temp\\WindowsUpdate.log",
     "    Write-Output 'Updates installed successfully.'",
     "} else {",
     "    Write-Output 'No updates available.'",
     "}"
-  ]
-}
+    ]
+    
+ }
 
 
 
