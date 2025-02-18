@@ -23,6 +23,7 @@ jobs:
 
     - name: List Old Image Versions
       id: list-images
+      shell: pwsh
       run: |
         # Define variables
         RESOURCE_GROUP="rg-packer-acg"
