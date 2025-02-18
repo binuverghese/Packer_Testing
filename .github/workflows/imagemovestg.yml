@@ -48,46 +48,92 @@ jobs:
          # Export to GitHub Actions environment variable
         "IMAGE_LIST=$IMAGE_LIST" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
-    - name: Move Old Image Versions to Storage
-      shell: pwsh
-      run: |
+        - name: Move Old Image Versions to Storage
+        shell: pwsh
+        run: |
           # Define variables
           $RESOURCE_GROUP = "rg-packer-acg"
-          $GALLERY_NAME="AzurepackerImages"
-          $IMAGE_NAME="win2019dcx64"
-          $STORAGE_ACCOUNT = "tfstatewells"
-          $CONTAINER_NAME = "image-backups"
+          $GALLERY_NAME = "your-gallery-name"
+          $IMAGE_NAME = "your-image-definition"
+          $STORAGE_ACCOUNT = "yourstorageaccount"
+          $STORAGE_CONTAINER = "old-images"
+          $LOCATION = "eastus"  # Update your region
       
-          # Get old image versions
-          $OLD_IMAGES = az sig image-version list `
+          # Get all image versions sorted by publish date
+          $ALL_IMAGES = az sig image-version list `
             --resource-group $RESOURCE_GROUP `
             --gallery-name $GALLERY_NAME `
             --gallery-image-definition $IMAGE_NAME `
-            --query "[?tags.retention!='keep'].name" `
+            --query "sort_by([].{name:name, created:publishingProfile.publishedDate}, &created)" `
             --output json | ConvertFrom-Json
       
-          if ($OLD_IMAGES -eq $null -or $OLD_IMAGES.Count -eq 0) {
-            Write-Output "No old images found to move."
+          if ($ALL_IMAGES -eq $null -or $ALL_IMAGES.Count -lt 3) {
+            Write-Output "Not enough images to process. At least 3 required to exclude latest 2."
             exit 0
           }
       
-          # Loop through each image version and move it to storage
-          foreach ($IMAGE_VERSION in $OLD_IMAGES) {
+          # Select the two oldest images (excluding latest N-2 versions)
+          $OLD_IMAGES = $ALL_IMAGES[0..1]
+      
+          foreach ($IMAGE in $OLD_IMAGES) {
+            $IMAGE_VERSION = $IMAGE.name
             Write-Output "Processing image version: $IMAGE_VERSION"
-            
-            # Export the image to a storage account
-            az sig image-version export `
+      
+            # Define names
+            $DISK_NAME = "$IMAGE_NAME-$IMAGE_VERSION-disk"
+            $VHD_NAME = "$IMAGE_VERSION.vhd"
+      
+            # Step 1: Create a managed disk from the image
+            az disk create `
               --resource-group $RESOURCE_GROUP `
-              --gallery-name $GALLERY_NAME `
-              --gallery-image-definition $IMAGE_NAME `
-              --gallery-image-version $IMAGE_VERSION `
-              --target-name "$IMAGE_VERSION.vhd" `
-              --storage-account $STORAGE_ACCOUNT `
-              --storage-container $CONTAINER_NAME
-            
+              --name $DISK_NAME `
+              --gallery-image-reference-id "/subscriptions/YOUR_SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/$GALLERY_NAME/images/$IMAGE_NAME/versions/$IMAGE_VERSION" `
+              --location $LOCATION `
+              --os-type Windows `
+              --sku Standard_LRS
+      
             if ($?) {
-              Write-Output "Successfully moved image version $IMAGE_VERSION"
+              Write-Output "Managed disk $DISK_NAME created."
             } else {
-              Write-Output "Failed to move image version $IMAGE_VERSION"
+              Write-Output "Failed to create managed disk for image version $IMAGE_VERSION"
+              continue
             }
+      
+            # Step 2: Generate SAS URL for export
+            $SAS_URL = az disk grant-access `
+              --resource-group $RESOURCE_GROUP `
+              --name $DISK_NAME `
+              --duration-in-seconds 3600 `
+              --access-level Read `
+              --query accessSas -o tsv
+      
+            if ($?) {
+              Write-Output "SAS URL generated for $DISK_NAME."
+            } else {
+              Write-Output "Failed to generate SAS URL for $DISK_NAME"
+              continue
+            }
+      
+            # Step 3: Copy VHD to storage account
+            az storage blob copy start `
+              --destination-container $STORAGE_CONTAINER `
+              --account-name $STORAGE_ACCOUNT `
+              --destination-blob $VHD_NAME `
+              --source-uri $SAS_URL
+      
+            if ($?) {
+              Write-Output "Successfully moved $IMAGE_VERSION to storage as $VHD_NAME."
+            } else {
+              Write-Output "Failed to copy $IMAGE_VERSION to storage."
+              continue
+            }
+      
+            # Step 4: Delete temporary managed disk
+            az disk delete `
+              --resource-group $RESOURCE_GROUP `
+              --name $DISK_NAME `
+              --yes
+      
+            Write-Output "Temporary managed disk $DISK_NAME deleted."
           }
+      
