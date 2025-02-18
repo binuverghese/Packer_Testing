@@ -28,13 +28,13 @@ jobs:
         # Define variables
         $RESOURCE_GROUP="rg-packer-acg"
         $GALLERY_NAME="AzurepackerImages"
-        $IMAGE_NAME="win2019dcx64"
+        $IMAGE_DEFINITION="win2019dcx64"
         
         # Get all image versions except those tagged with "keep"
          $OLD_IMAGES = az sig image-version list `
          --resource-group $RESOURCE_GROUP `
          --gallery-name $GALLERY_NAME `
-         --gallery-image-definition $IMAGE_NAME `
+         --gallery-image-definition $IMAGE_DEFINITION `
          --query "[?tags.retention!='keep'].name" `
          --output json | ConvertFrom-Json
 
@@ -54,7 +54,7 @@ jobs:
           # Define variables
           $RESOURCE_GROUP="rg-packer-acg"
           $GALLERY_NAME="AzurepackerIma"
-          $IMAGE_NAME="win2019dcx64"
+          $IMAGE_DEFINITION="win2019dcx64"
           $STORAGE_ACCOUNT="tfstatewells"
           $STORAGE_CONTAINER="image-backups"
           $LOCATION="westus"  # Update your region
@@ -63,7 +63,7 @@ jobs:
           $ALL_IMAGES = az sig image-version list `
             --resource-group $RESOURCE_GROUP `
             --gallery-name $GALLERY_NAME `
-            --gallery-image-definition $IMAGE_NAME `
+            --gallery-image-definition $IMAIMAGE_DEFINITION `
             --query "sort_by([].{name:name, created:publishingProfile.publishedDate}, &created)" `
             --output json | ConvertFrom-Json
       
