@@ -30,8 +30,8 @@ jobs:
         $GALLERY_NAME="AzurepackerImages"
         $IMAGE_NAME="win2019dcx64"
         
-        $OLD_IMAGES=$(az sig image-version list --resource-group $RESOURCE_GROUP \
-          --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME \
+        $OLD_IMAGES=$(az sig image-version list --resource-group $RESOURCE_GROUP `
+          --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME `
           --query "[?tags.retention!='keep'].{name:name, created:publishingProfile.publishedDate}" -o json | jq -r '.[].name')
           --query "[?tags.retention!='keep'].{name:name, created:publishingProfile.publishedDate}" -o json | jq -r '.[].name')
 
