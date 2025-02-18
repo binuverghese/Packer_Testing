@@ -48,9 +48,9 @@ jobs:
          # Export to GitHub Actions environment variable
         "IMAGE_LIST=$IMAGE_LIST" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
-        - name: Move Old Image Versions to Storage
-        shell: pwsh
-        run: |
+    - name: Move Old Image Versions to Storage
+      shell: pwsh
+      run: |
           # Define variables
           $RESOURCE_GROUP = "rg-packer-acg"
           $GALLERY_NAME = "your-gallery-name"
