@@ -1,0 +1,80 @@
+name: Move Old Azure Images to Storage
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Runs every Monday at midnight UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  move-images:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: List Old Image Versions
+      id: list-images
+      run: |
+        # Define variables
+        RESOURCE_GROUP="rg-packer-acg"
+        GALLERY_NAME="AzurepackerImages"
+        IMAGE_NAME="win2019dcx64"
+        
+        # Get all image versions sorted by creation time
+        OLD_IMAGES=$(az sig image-version list --resource-group $RESOURCE_GROUP \
+          --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME \
+          --query "[?tags.retention!='keep'].{name:name, created:publishingProfile.publishedDate}" -o json | jq -r '.[].name')
+
+        echo "Old Images to Move:"
+        echo "$OLD_IMAGES"
+
+        # Save to environment variable for next step
+        echo "IMAGE_LIST=$OLD_IMAGES" >> $GITHUB_ENV
+
+    - name: Move Images to Storage
+      run: |
+        RESOURCE_GROUP="Test_VM"
+        GALLERY_NAME="AzurepackerImages"
+        IMAGE_NAME="your-image-definition"
+        STORAGE_ACCOUNT="tfstatewells"
+        CONTAINER_NAME="image-backups"
+
+        for IMAGE_VERSION in $IMAGE_LIST; do
+          echo "Exporting $IMAGE_VERSION..."
+
+          # Export image version to storage as a VHD
+          az sig image-version show --resource-group $RESOURCE_GROUP \
+            --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME \
+            --gallery-image-version $IMAGE_VERSION --query "storageProfile.osDiskImage.uri" -o tsv > image_uri.txt
+
+          IMAGE_URI=$(cat image_uri.txt)
+
+          # Copy image to Azure Storage Account
+          az storage blob copy start --destination-container $CONTAINER_NAME \
+            --destination-blob "$IMAGE_NAME-$IMAGE_VERSION.vhd" --account-name $STORAGE_ACCOUNT \
+            --source-uri $IMAGE_URI
+
+          echo "Moved $IMAGE_VERSION to $STORAGE_ACCOUNT/$CONTAINER_NAME"
+        done
+
+    - name: Delete Old Images (Optional)
+      if: success()
+      run: |
+        RESOURCE_GROUP="your-resource-group"
+        GALLERY_NAME="your-gallery-name"
+        IMAGE_NAME="your-image-definition"
+
+        for IMAGE_VERSION in $IMAGE_LIST; do
+          echo "Deleting $IMAGE_VERSION..."
+          az sig image-version delete --resource-group $RESOURCE_GROUP \
+            --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME \
+            --gallery-image-version $IMAGE_VERSION
+        done
