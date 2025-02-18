@@ -56,7 +56,7 @@ jobs:
       run: |
           # Define variables
           $RESOURCE_GROUP="rg-packer-acg"
-          $GALLERY_NAME="AzurepackerIma"
+          $GALLERY_NAME="AzurepackerImages"
           $IMAGE_DEFINITION="win2019dcx64"
           $STORAGE_ACCOUNT="tfstatewells"
           $STORAGE_CONTAINER="image-backups"
