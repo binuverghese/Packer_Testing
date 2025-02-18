@@ -8,6 +8,11 @@ on:
 jobs:
   move-images:
     runs-on: self-hosted
+    env:
+      IMAGE_GALLERY: "AzurepackerImages"
+      RESOURCE_GROUP: "rg-packer-acg"
+      IMAGE_DEFINITION: "win2019x64-repave"
+      KEEP_VERSIONS: 0  # Number of latest versions to keep
 
     steps:
     - name: Checkout Repository
@@ -25,29 +30,24 @@ jobs:
       id: list-images
       shell: pwsh
       run: |
-        # Define variables
-        $RESOURCE_GROUP="rg-packer-acg"
-        $GALLERY_NAME="AzurepackerImages"
-        $IMAGE_DEFINITION="win2019dcx64"
-        
-        # Get all image versions except those tagged with "keep"
-         $OLD_IMAGES = az sig image-version list `
-         --resource-group $RESOURCE_GROUP `
-         --gallery-name $GALLERY_NAME `
-         --gallery-image-definition $IMAGE_DEFINITION `
-         --query "[?tags.retention!='keep'].name" `
-         --output json | ConvertFrom-Json
-
-        if ($OLD_IMAGES -eq $null -or $OLD_IMAGES.Count -eq 0) {
-         Write-Output "No old images found to move."
-         exit 0
-        }
-        # Convert the list to a space-separated string
-        $IMAGE_LIST = $OLD_IMAGES -join ' '
-       
-         # Export to GitHub Actions environment variable
-        "IMAGE_LIST=$IMAGE_LIST" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-
+        Write-Output "Fetching image versions..."
+            $imageVersions = az sig image-version list `
+              --resource-group $env:RESOURCE_GROUP `
+              --gallery-name $env:IMAGE_GALLERY `
+              --gallery-image-definition $env:IMAGE_DEFINITION `
+              --query "[].{version:name}" `
+              --output tsv | Sort-Object
+  
+            Write-Output "Image Versions Found:"
+            Write-Output "$imageVersions"
+  
+            $count = ($imageVersions -split "`n").Count
+            Write-Output "Total versions: $count"
+  
+            if ($count -gt $env:KEEP_VERSIONS) {
+              $deleteCount = $count - [int]$env:KEEP_VERSIONS
+              $deleteVersions = ($imageVersions -split "`n") | Select-Object -First $deleteCount
+              
     - name: Move Old Image Versions to Storage
       shell: pwsh
       run: |
