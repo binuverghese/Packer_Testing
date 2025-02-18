@@ -30,16 +30,23 @@ jobs:
         $GALLERY_NAME="AzurepackerImages"
         $IMAGE_NAME="win2019dcx64"
         
-        $OLD_IMAGES=$(az sig image-version list --resource-group $RESOURCE_GROUP `
-          --gallery-name $GALLERY_NAME --gallery-image-definition $IMAGE_NAME `
-          --query "[?tags.retention!='keep'].{name:name, created:publishingProfile.publishedDate}" -o json | jq -r '.[].name')
-          --query "[?tags.retention!='keep'].{name:name, created:publishingProfile.publishedDate}" -o json | jq -r '.[].name')
+        # Get all image versions except those tagged with "keep"
+         $OLD_IMAGES = az sig image-version list `
+         --resource-group $RESOURCE_GROUP `
+         --gallery-name $GALLERY_NAME `
+         --gallery-image-definition $IMAGE_NAME `
+         --query "[?tags.retention!='keep'].name" `
+         --output json | ConvertFrom-Json
 
-        echo "Old Images to Move:"
-        echo "$OLD_IMAGES"
-
-        echo "IMAGE_LIST=$OLD_IMAGES" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "IMAGE_LIST=$OLD_IMAGES" >> $GITHUB_ENV
+        if ($OLD_IMAGES -eq $null -or $OLD_IMAGES.Count -eq 0) {
+         Write-Output "No old images found to move."
+         exit 0
+        }
+        # Convert the list to a space-separated string
+        $IMAGE_LIST = $OLD_IMAGES -join ' '
+       
+         # Export to GitHub Actions environment variable
+        "IMAGE_LIST=$IMAGE_LIST" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
     - name: Move Images to Storage
       run: |
