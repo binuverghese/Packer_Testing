@@ -46,7 +46,10 @@ jobs:
             if ($count -gt $env:KEEP_VERSIONS) {
               $deleteCount = $count - [int]$env:KEEP_VERSIONS
               $deleteVersions = ($imageVersions -split "`n") | Select-Object -First $deleteCount
-
+             }
+            } else {
+              Write-Output "No old versions to delete."
+            }
 
     - name: Move Old Image Versions to Storage
       shell: pwsh
