@@ -67,12 +67,12 @@ jobs:
             --query "sort_by([].{name:name, created:publishingProfile.publishedDate}, &created)" `
             --output json | ConvertFrom-Json
       
-          if ($ALL_IMAGES -eq $null -or $ALL_IMAGES.Count -lt 3) {
+          if ($ALL_IMAGES -eq $null -or $ALL_IMAGES.Count -lt 2) {
             Write-Output "Not enough images to process. At least 3 required to exclude latest 2."
             exit 0
           }
       
-          # Select the two oldest images (excluding latest N-2 versions)
+          # Select the two oldest images (excluding latest N-1 versions)
           $OLD_IMAGES = $ALL_IMAGES[0..1]
       
           foreach ($IMAGE in $OLD_IMAGES) {
