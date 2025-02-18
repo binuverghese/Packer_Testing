@@ -26,11 +26,10 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID1 }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID1 }}
 
-    - name: List Old Image Versions
-      id: list-images
+    - name: Fetch and Delete Old Image Versions
       shell: pwsh
       run: |
-        Write-Output "Fetching image versions..."
+            Write-Output "Fetching image versions..."
             $imageVersions = az sig image-version list `
               --resource-group $env:RESOURCE_GROUP `
               --gallery-name $env:IMAGE_GALLERY `
@@ -47,7 +46,8 @@ jobs:
             if ($count -gt $env:KEEP_VERSIONS) {
               $deleteCount = $count - [int]$env:KEEP_VERSIONS
               $deleteVersions = ($imageVersions -split "`n") | Select-Object -First $deleteCount
-              
+
+
     - name: Move Old Image Versions to Storage
       shell: pwsh
       run: |
