@@ -26,9 +26,9 @@ jobs:
       shell: pwsh
       run: |
         # Define variables
-        RESOURCE_GROUP="rg-packer-acg"
-        GALLERY_NAME="AzurepackerImages"
-        IMAGE_NAME="win2019dcx64"
+          $RESOURCE_GROUP = "rg-packer-acg"
+        $GALLERY_NAME="AzurepackerImages"
+        $IMAGE_NAME="win2019dcx64"
         
         # Get all image versions sorted by creation time
         OLD_IMAGES=$(az sig image-version list --resource-group $RESOURCE_GROUP \
@@ -43,11 +43,11 @@ jobs:
 
     - name: Move Images to Storage
       run: |
-        RESOURCE_GROUP="Test_VM"
-        GALLERY_NAME="AzurepackerImages"
-        IMAGE_NAME="your-image-definition"
-        STORAGE_ACCOUNT="tfstatewells"
-        CONTAINER_NAME="image-backups"
+        $RESOURCE_GROUP="Test_VM"
+        $GALLERY_NAME="AzurepackerImages"
+        $IMAGE_NAME="your-image-definition"
+        $STORAGE_ACCOUNT="tfstatewells"
+        $CONTAINER_NAME="image-backups"
 
         for IMAGE_VERSION in $IMAGE_LIST; do
           echo "Exporting $IMAGE_VERSION..."
