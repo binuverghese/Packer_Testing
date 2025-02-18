@@ -52,12 +52,12 @@ jobs:
       shell: pwsh
       run: |
           # Define variables
-          $RESOURCE_GROUP ="rg-packer-acg"
-          $GALLERY_NAME ="AzurepackerIma"
-          $IMAGE_NAME ="win2019dcx64"
-          $STORAGE_ACCOUNT ="tfstatewells"
-          $STORAGE_CONTAINER ="image-backups"
-          $LOCATION ="westus"  # Update your region
+          $RESOURCE_GROUP="rg-packer-acg"
+          $GALLERY_NAME="AzurepackerIma"
+          $IMAGE_NAME="win2019dcx64"
+          $STORAGE_ACCOUNT="tfstatewells"
+          $STORAGE_CONTAINER="image-backups"
+          $LOCATION="westus"  # Update your region
       
           # Get all image versions sorted by publish date
           $ALL_IMAGES = az sig image-version list `
